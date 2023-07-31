@@ -6,7 +6,7 @@ export default function OneContact({onShowContacts , contactName , contactId }) 
     const {openNewDiscussion } = useDiscussions()
 
     function handleOpenDiscussion(){
-        openNewDiscussion([{id:contactId , name:contactName}])
+        openNewDiscussion([{id:contactId , name:contactName }])
         onShowContacts(false)
     }
 

@@ -6,8 +6,6 @@ import { useDiscussions } from '../../../../providers/DiscussionsProvider'
 
 export default function Discussions() {
     const {discussions } = useDiscussions()
-    console.log('this is from discussions')
-    console.log(discussions)
     const [active , setActive] = useState(null)
 
     return (

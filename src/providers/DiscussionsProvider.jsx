@@ -19,44 +19,23 @@ function generateId(){
 
 
 export default function DiscussionsProvider({children}) {   
-    const [discussions , setDiscussions] = useState([])
-   
-    const [activeDiscussion , setActiveDiscussion]= useState(null)
-    useSocket()
-    
-    useEffect(()=>{
-        if(activeDiscussion) {
-            let oldDiscussion = fetchDiscussion(activeDiscussion.recipients)
-            if(!oldDiscussion){
-                setDiscussions(prev=>[...prev , activeDiscussion])
-            }else{
-                setDiscussions((prev)=>{
-                    // let newDiscussions = prev.filter((discussion)=>{
-                    //     return discussion.recipients.toString() != activeDiscussion.recipients.toString()
-                    // })
-                    prev.forEach((discussion)=>{
-                        if(compareArrays(activeDiscussion.recipients , discussion.recipients)){
-                            prev.splice(prev.indexOf(discussion) , 1 , activeDiscussion)
-                        }
-                    })
-                    return [...prev] 
-                })            
-            }
-        }
-    },[activeDiscussion])
+    const [discussions , setDiscussions] = useState([])   
+    const socket = useSocket()
 
     
     function addMessageToDiscussion(recipients , message){
         socket.emit('send-message' , {recipients , message})
-        setActiveDiscussion((prev)=>{
-            return {...prev , recipients , messages : [...prev.messages , message]} 
-        })
+        const newDiscussions = [...discussions]
+            newDiscussions.forEach((discussion)=>{
+                if(discussion.isActive == true){
+                    discussion.messages.push(message)
+                }
+            })
+        setDiscussions(newDiscussions)
     }
-
+  
     const recieveMessage = useCallback(({recipients , message})=>{
-      
-            addRecievedMessageToDiscussion(recipients , message)
-        
+            addRecievedMessageToDiscussion(recipients , message)    
     },[])
    
     useEffect(()=>{
@@ -91,19 +70,20 @@ export default function DiscussionsProvider({children}) {
     }
 
     function openNewDiscussion(recipients){
-        if(activeDiscussion && (compareArrays(activeDiscussion.recipients , recipients))){
-             return
+        let activeDiscussion = findActiveDiscussion()
+        if(activeDiscussion && compareArrays(activeDiscussion.recipients , recipients)){
+            return
         }
-        let oldDiscussion = fetchDiscussion(recipients)
-        if(oldDiscussion) {
-            setActiveDiscussion(oldDiscussion)
-        }else{
-            setActiveDiscussion({recipients , messages:[]})
-        }       
+        setDiscussions((prev)=>{
+            return [...prev , {recipients , messages:[] , isActive:true}]
+        })
     }
 
-    function compareArrays(a , b){
-      
+    function openOldDiscussion(recipients){
+
+    }
+
+    function compareArrays(a , b){   
         if(a.length != b.length) return false
         a.sort((a , b)=>{
             return a.id < b.id
@@ -117,18 +97,20 @@ export default function DiscussionsProvider({children}) {
         return result
     }
 
-    function fetchDiscussion(recipients){
-        let fetched = discussions.find((discussion)=>{
-            return compareArrays(discussion.recipients , recipients)  
+    function findActiveDiscussion(){
+        return discussions.find((discussion)=>{
+            return discussion.isActive == true
         })
-        // console.log(recipients)
-        // console.log(fetched)
-        if(!fetched ) return false
-        return fetched 
     }
 
+    const value = {
+        discussions, 
+        openNewDiscussion , 
+        addMessageToDiscussion,
+        activeDiscussion : findActiveDiscussion()
+    }
     return (
-        <DiscussionsContext.Provider value={{discussions , activeDiscussion , openNewDiscussion , addMessageToDiscussion , fetchDiscussion }}>
+        <DiscussionsContext.Provider value={value}>
             {children}
         </DiscussionsContext.Provider>
   )

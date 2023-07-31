@@ -18,7 +18,7 @@ export default function OpenDiscussion({id}) {
 
   const messageInputRef = useRef(null)
 
-  if(activeDiscussion == null) return
+  if(!activeDiscussion) return
 
 
 
