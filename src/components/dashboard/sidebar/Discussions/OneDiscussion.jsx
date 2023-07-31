@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import {Box,Avatar,ListItem,ListItemAvatar,ListItemText,Typography} from '@mui/material'
 import { useDiscussions } from '../../../../providers/DiscussionsProvider'
 export default function OneDiscussion({active , onActive, recipients , latestMsg}) {
-  const {openNewDiscussion} = useDiscussions()
+  const {openOldDiscussion} = useDiscussions()
   
   const discussionRef = useRef(null)
   
@@ -12,7 +12,7 @@ export default function OneDiscussion({active , onActive, recipients , latestMsg
 
   function handleOpenDiscussion(e){
     onActive(discussionRef.current)
-    openNewDiscussion([recipients])
+    openOldDiscussion([recipients])
   }
 
   return (

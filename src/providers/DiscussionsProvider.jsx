@@ -8,21 +8,62 @@ export function useDiscussions(){
     return useContext(DiscussionsContext)
 }
 
-function generateId(){
-    const chars = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    let id = ''
-    for(let i=0 ; i<8 ; i++){
-      id += chars[Math.floor(Math.random()*chars.length)]
-    }
-    return id
-  }
+
+  function compareArrays(a , b){   
+    if(a.length != b.length) return false
+    a.sort((a , b)=>{
+        return a.id < b.id
+    })
+    b.sort((a , b)=>{
+        return a.id < b.id
+    })
+    let result = a.every((item , index)=>{
+        return item.id == b[index].id
+    }) 
+    return result
+}
+
 
 
 export default function DiscussionsProvider({children}) {   
     const [discussions , setDiscussions] = useState([])   
     const socket = useSocket()
 
+    function findActiveDiscussion(){
+        return discussions.find((discussion)=>{
+            return discussion.isActive == true
+        })
+    }
     
+
+    function openNewDiscussion(recipients){
+        let activeDiscussion = findActiveDiscussion()
+
+        if(activeDiscussion && compareArrays(activeDiscussion.recipients , recipients)){
+            return
+        }
+
+        const newDiscussions = [...discussions]
+        newDiscussions.forEach((discussion)=>{
+            discussion.isActive = false
+        })
+        newDiscussions.push({recipients , messages:[] , isActive:true})
+        setDiscussions(newDiscussions)
+    }
+
+    function openOldDiscussion(recipients){
+        const newDiscussions = [...discussions]
+        newDiscussions.forEach((discussion)=>{
+            discussion.isActive = false
+            if(compareArrays(discussion.recipients , recipients)){
+                discussion.isActive = true
+            }
+        })
+        setDiscussions(newDiscussions)
+    }
+
+
+
     function addMessageToDiscussion(recipients , message){
         socket.emit('send-message' , {recipients , message})
         const newDiscussions = [...discussions]
@@ -33,81 +74,51 @@ export default function DiscussionsProvider({children}) {
             })
         setDiscussions(newDiscussions)
     }
-  
-    const recieveMessage = useCallback(({recipients , message})=>{
-            addRecievedMessageToDiscussion(recipients , message)    
-    },[])
-   
+
+    
+    
+
+    const addRecievedMessageToDiscussion = useCallback( ({recipients , message})=>{
+        const isDiscussionExist = discussions.find((d)=> {
+            console.log(JSON.stringify(d.recipients) + '====' + JSON.stringify(recipients))
+            return compareArrays(d.recipients , recipients)
+        }) 
+
+        if(isDiscussionExist){
+            const newDiscussions = [...discussions]
+            newDiscussions.forEach((discussion)=>{
+                if(compareArrays(discussion.recipients , recipients)){
+                    discussion.messages.push(message)
+                }
+            })
+            console.log('new Discussions in case there is a discussion')
+            console.log(newDiscussions)
+            
+            setDiscussions(newDiscussions)
+        }
+        else{        
+            const newDiscussions = [...discussions]
+            newDiscussions.push({recipients:recipients , messages:[message] , isActive:false})
+           
+            setDiscussions(newDiscussions)
+        }
+    },[discussions])
+
+
+
     useEffect(()=>{
         if(socket == null) return
-        socket.on('recieve-message' , recieveMessage)
+        socket.on('recieve-message' , addRecievedMessageToDiscussion)
 
         return ()=>socket.off('recieve-message')
-    },[socket ])
-
-    function addRecievedMessageToDiscussion(recipients , message){
-      
-        let fetched = fetchDiscussion(recipients)
-        if(fetched){
-            console.log('this should run second')    
-            setDiscussions((prev)=>{
-                prev.forEach((discussion)=>{
-                    if(compareArrays(discussion.recipients , recipients)){
-                        discussion.messages.push(message)
-                    }
-                })
-            
-                return [...prev]
-            })
-        }
-        else{
-            setDiscussions((prev)=>{
-                let newDiscussions = prev
-                newDiscussions.push({recipients:recipients , messages:[message]})
-                return [...newDiscussions]
-            })
-        }
-    }
-
-    function openNewDiscussion(recipients){
-        let activeDiscussion = findActiveDiscussion()
-        if(activeDiscussion && compareArrays(activeDiscussion.recipients , recipients)){
-            return
-        }
-        setDiscussions((prev)=>{
-            return [...prev , {recipients , messages:[] , isActive:true}]
-        })
-    }
-
-    function openOldDiscussion(recipients){
-
-    }
-
-    function compareArrays(a , b){   
-        if(a.length != b.length) return false
-        a.sort((a , b)=>{
-            return a.id < b.id
-        })
-        b.sort((a , b)=>{
-            return a.id < b.id
-        })
-        let result = a.every((item , index)=>{
-            return item.id == b[index].id
-        }) 
-        return result
-    }
-
-    function findActiveDiscussion(){
-        return discussions.find((discussion)=>{
-            return discussion.isActive == true
-        })
-    }
+    },[socket , addMessageToDiscussion])
 
     const value = {
         discussions, 
         openNewDiscussion , 
+        openOldDiscussion,
         addMessageToDiscussion,
-        activeDiscussion : findActiveDiscussion()
+        activeDiscussion : findActiveDiscussion(),
     }
     return (
         <DiscussionsContext.Provider value={value}>
