@@ -29,17 +29,11 @@ export default function DiscussionsProvider({children}) {
     const [discussions , setDiscussions] = useState([])   
     const socket = useSocket()
 
-    function findActiveDiscussion(){
-        return discussions.find((discussion)=>{
-            return discussion.isActive == true
-        })
-    }
-    
-
     function openNewDiscussion(recipients){
-        let activeDiscussion = findActiveDiscussion()
-
-        if(activeDiscussion && compareArrays(activeDiscussion.recipients , recipients)){
+        let isDiscussionExist = findDiscussionByRecipients(recipients)
+        
+        if( isDiscussionExist){
+            openOldDiscussion(recipients)
             return
         }
 
@@ -79,10 +73,7 @@ export default function DiscussionsProvider({children}) {
     
 
     const addRecievedMessageToDiscussion = useCallback( ({recipients , message})=>{
-        const isDiscussionExist = discussions.find((d)=> {
-            console.log(JSON.stringify(d.recipients) + '====' + JSON.stringify(recipients))
-            return compareArrays(d.recipients , recipients)
-        }) 
+        const isDiscussionExist = findDiscussionByRecipients(recipients) 
 
         if(isDiscussionExist){
             const newDiscussions = [...discussions]
@@ -113,6 +104,9 @@ export default function DiscussionsProvider({children}) {
         return ()=>socket.off('recieve-message')
     },[socket , addMessageToDiscussion])
 
+
+    
+    
     const value = {
         discussions, 
         openNewDiscussion , 
@@ -120,6 +114,20 @@ export default function DiscussionsProvider({children}) {
         addMessageToDiscussion,
         activeDiscussion : findActiveDiscussion(),
     }
+
+    function findActiveDiscussion(){
+        return discussions.find((discussion)=>{
+            return discussion.isActive == true
+        })
+    }
+
+    function findDiscussionByRecipients(recipients){
+        return discussions.find((d)=> {
+            return compareArrays(d.recipients , recipients)
+        }) 
+    }
+
+
     return (
         <DiscussionsContext.Provider value={value}>
             {children}
