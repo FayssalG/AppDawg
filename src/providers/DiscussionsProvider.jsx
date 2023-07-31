@@ -22,7 +22,6 @@ export default function DiscussionsProvider({children}) {
     const [discussions , setDiscussions] = useState([])
    
     const [activeDiscussion , setActiveDiscussion]= useState(null)
-    const socket = useSocket()
 
     useEffect(()=>{
         if(activeDiscussion) {
