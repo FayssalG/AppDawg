@@ -22,7 +22,8 @@ export default function DiscussionsProvider({children}) {
     const [discussions , setDiscussions] = useState([])
    
     const [activeDiscussion , setActiveDiscussion]= useState(null)
-
+    useSocket()
+    
     useEffect(()=>{
         if(activeDiscussion) {
             let oldDiscussion = fetchDiscussion(activeDiscussion.recipients)
