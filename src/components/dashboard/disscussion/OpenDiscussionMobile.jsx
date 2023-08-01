@@ -43,14 +43,13 @@ export default function OpenDiscussion({id}) {
   return (
     <Slide sx={{position:'fixed' , top:0 , right:0,width:'100%'}} direction='left' in={showDiscussion} unmountOnExit mountOnEnter>
 
-        
         <Box 
-        backgroundColor='primary.dark'
-        boxShadow='-.2px 0 0 grey' 
-        height='90vh' 
-        display='flex' 
-        flexDirection='column'  
-        position='relative'>
+          backgroundColor='primary.dark'
+          boxShadow='-.2px 0 0 grey' 
+          height='90vh' 
+          display='flex' 
+          flexDirection='column'  
+          position='relative'>
         
         <TopbarDiscussion showDiscussion={showDiscussion} onShowDiscussion={setShowDiscussion} recipients={activeDiscussion.recipients}/>
         
@@ -70,13 +69,13 @@ export default function OpenDiscussion({id}) {
             marginTop='auto' >
         
             <form onSubmit={handleMessageSend}>
-            <FormControl sx={{width:'100%'}} variant="standard"   >
-                <OutlinedInput  sx={{height:45}} inputRef={messageInputRef} placeholder='message' endAdornment={
-                <IconButton type='submit'>
-                    <SendSharp/>
-                </IconButton>
-                } />
-            </FormControl>
+              <FormControl sx={{width:'100%'}} variant="standard"   >
+                  <OutlinedInput  sx={{height:45}} inputRef={messageInputRef} placeholder='message' endAdornment={
+                  <IconButton type='submit'>
+                      <SendSharp/>
+                  </IconButton>
+                  } />
+              </FormControl>
             </form>
             
           </Box>

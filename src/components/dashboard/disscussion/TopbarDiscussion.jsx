@@ -7,13 +7,14 @@ import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography} from 
 
 export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,recipients}) {
   return (
-    <AppBar 
-      sx={{borderBottom:2, borderColor:'primary.main' , height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} 
+    <Box 
+      
+      sx={{ borderColor:'primary.main' , height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} 
       position='static' 
     >
-    <Toolbar display='flex' sx={{alignItems:'center'}}>
+    <Toolbar display='flex' sx={{py:1,alignItems:'center'}}>
         { 
-        showDiscussion ?
+          showDiscussion ?
           <Box> 
             <IconButton onClick={()=>onShowDiscussion(false)}>
               <ArrowBack/>
@@ -29,8 +30,8 @@ export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,rec
         </Box>
         
         <Box ml={1} mt={1}>
-          <Typography variant='body1' lineHeight={.9}>{recipients[0].id}</Typography>
-          <Typography variant='caption' >Online</Typography>
+          <Typography variant='body1' lineHeight={.9} fontSize={19}>{recipients[0].id}</Typography>
+          <Typography variant='caption' color='primary.light'>Online</Typography>
         </Box>            
 
         <Box ml='auto' >
@@ -41,7 +42,7 @@ export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,rec
       
     </Toolbar>      
   
-  </AppBar>
+  </Box>
 
   )
 }

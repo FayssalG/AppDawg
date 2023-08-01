@@ -11,7 +11,7 @@ export default function OneContact({onShowContacts , contactName , contactId }) 
     }
 
     return (
-    <Box onClick={handleOpenDiscussion} sx={{cursor:'pointer', ':hover' :{
+    <Box  onClick={handleOpenDiscussion} sx={{cursor:'pointer', ':hover' :{
         backgroundColor: '#2A3942',
     }}}>
         <ListItem sx={{px:1 , height:'80px'}}>

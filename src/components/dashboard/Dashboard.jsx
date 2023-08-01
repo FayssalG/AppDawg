@@ -1,3 +1,4 @@
+import background from '../../Assets/background.jpg'
 import React, { useState , useEffect} from 'react'
 import { useAuth } from '../../providers/AuthProvider'
 import useChatId from '../../hooks/useChatId'
@@ -38,13 +39,13 @@ export default function Dashboard() {
         <DiscussionsProvider>
           <ContactsProvider>
             
-            <Grid container spacing={0}  overflow='hidden'>
-              <Grid item xs={12} md={3.7}>
+            <Grid container spacing={0}  overflow='hidden' >
+              <Grid item xs={12} md={3.7} >
                 <Sidebar id={id} signOut={signOut} user={user}/>      
               
               </Grid>
               
-              <Grid item  xs={12} md={8.3} >
+              <Grid item  xs={12} md={8.3} sx={{backgroundImage:`url('${background}')` , backgroundPosition:'center'}}>
                   {matches ? <OpenDiscussion id={id} /> : <OpenDiscussionMobile id={id}/>} 
               </Grid>
             </Grid>

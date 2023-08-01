@@ -15,14 +15,14 @@ const theme = createTheme({
     mode : 'dark',
     primary:{
       main:  '#C84B31',
-      light:'#9e5b4c',
-      dark: '#000814'
+      light:'#caf0f8',
+      dark: '#010811'
     },
     secondary : {
       main :'#55dde0',
     },
     topbar :{
-      main:'#1b263b'
+      main:'#0d233a'
     } ,
  
 
