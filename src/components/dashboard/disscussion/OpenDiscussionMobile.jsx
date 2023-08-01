@@ -28,8 +28,6 @@ export default function OpenDiscussion({id}) {
 
   if(!activeDiscussion) return
 
-
-
   function handleMessageSend(e){
     e.preventDefault()    
     let messageContent = messageInputRef.current.value

@@ -87,7 +87,7 @@ export default function Contacts({onShowContacts , showContacts}) {
                     </Typography>
                     {contacts.map((contact , index) => {             
                       if (contact.name[0].toUpperCase() == char)
-                        return <OneContact key={index} onShowContacts={onShowContacts} contactName={contact.name} contactId={contact.id}/>;
+                        return <OneContact key={index} onShowContacts={onShowContacts} contactDetails={contact}/>;
                     })}
                   </Box>
                 );

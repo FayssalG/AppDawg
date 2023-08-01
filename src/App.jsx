@@ -8,7 +8,7 @@ import { ThemeProvider , createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline';
 
 import { useAuth  } from './providers/AuthProvider'
-
+import UserProvider from './providers/UserProvider'
 
 const theme = createTheme({
   palette : {
@@ -36,18 +36,19 @@ function App() {
 
   
   return (
-    <ThemeProvider theme={theme}> 
-
-      <CssBaseline enableColorScheme/>
-      
+    <UserProvider>
+        <ThemeProvider theme={theme}> 
+  
+          <CssBaseline enableColorScheme/>
           <Routes>
             <Route path='/login' element={<Login/>}></Route>  
             <Route path='/signup' element={<Signup/>}></Route>  
             <Route path='/' element={<Dashboard />}></Route>  
           </Routes>
-       
+          
+        </ThemeProvider> 
 
-    </ThemeProvider> 
+    </UserProvider>
   )
 
 

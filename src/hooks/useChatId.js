@@ -1,5 +1,6 @@
 import React, { useEffect , useState} from 'react'
 import {collection ,query , where, getDocs, addDoc , } from 'firebase/firestore'
+import {getDatabase , ref , set ,get , child} from 'firebase/database'
 import {db} from '../config/firebase'
 
 import useLocalStorage from './useLocalStorage'
@@ -7,17 +8,18 @@ import useLocalStorage from './useLocalStorage'
 
 
 
-  const usersRef = collection(db , 'users')
 
-  async function storeId(uid  , chatId){
-        try{
-            
-            const docRef = await addDoc(usersRef , {
-                uid : uid,
-                chatId : chatId
+  async function storeId(user  , chatId){
+
+        try{    
+            set(ref(db , 'users/'+user.uid) , {
+                uid : user.uid,
+                chatId : chatId,
+                photoURL: user.photoURL,
+                infos : 'Hi Im new to AppDawg'
             })
-            console.log(docRef)
         }catch(err){
+            console.log(user.uid)
             console.log(err)
         }
   }
@@ -32,30 +34,27 @@ import useLocalStorage from './useLocalStorage'
   }
   
  
-export default function useChatId(uid){
+export default function useChatId(user){
 
     const [id , setId] = useLocalStorage('id')
     useEffect( ()=>{
         async function settingId(){
-            const q = query(usersRef , where('uid' ,'==' , uid))
-            const querySnapshot = await getDocs(q)
-            let count = 0
-            let data 
-            querySnapshot.forEach((doc)=>{
-                data=doc.data().chatId
-                count++
-            })
-            if(count == 0){
-                let newId = generateId()
-                storeId(uid , newId)
-                setId(newId)
+            let data
+            const dbRef = ref(db)
+            const snapshot = await get(child(dbRef , `users/${user.uid}`))
+            if(snapshot.exists()){
+                data = snapshot.val()
+                setId(data.chatId)
             }else{
-                setId(data)
+                console.log('No data')
+                let newId = generateId()
+                storeId(user , newId)
+                setId(newId)
             }
         }
         if(!id) settingId()
        
-    },[id])
+    },[id ])
 
     return [id ]
 }

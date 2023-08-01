@@ -15,24 +15,26 @@ import OpenDiscussionMobile from './disscussion/OpenDiscussionMobile'
 import DiscussionsProvider from '../../providers/DiscussionsProvider'
 import ContactsProvider from '../../providers/ContactsProvider'
 import SocketProvider from '../../providers/SocketProvider'
+import { useUser } from '../../providers/UserProvider'
 
 
 export default function Dashboard() {  
-    const {user , signOut , resendVerificationEmail} = useAuth()
+    const { signOut , resendVerificationEmail} = useAuth()
+    const {user , id} = useUser()
     const theme= useTheme()
     const matches = useMediaQuery(theme.breakpoints.up('sm'))
     
-
     if(!user){
       return <Navigate replace to='/login'/>
     }
+  
+ 
     // if(!user.emailVerified) {
     //   return( 
     //   <VerifyEmail signOut={signOut} resendVerificationEmail={resendVerificationEmail}/>  
     //   )
     // }
 
-    const [id] = useChatId(user.uid)
     
     return (     
       <SocketProvider id={id}>         
