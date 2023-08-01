@@ -37,9 +37,11 @@ export default function Profil({displayName,infos , photoURL ,dispatch , onShowP
   
   return (
     <Slide direction='right' in={showProfil} mountOnEnter unmountOnExit>
-        <Paper sx={{position:'absolute',zIndex:2,height:'100%', width:'100%', left:0,top:0 ,display:'flex' , flexDirection : 'column' , alignItems: 'center' }}>
+        <Box 
+          backgroundColor='primary.dark' 
+          sx={{position:'absolute',zIndex:2,height:'100%', width:'100%', left:0,top:0 ,display:'flex' , flexDirection : 'column' , alignItems: 'center' }}>
 
-            <AppBar position='static' >
+            <AppBar sx={{backgroundColor:'topbar.main'}} position='static' >
               <Box sx={{display:'flex' ,gap:4 , p:'4rem 0 1rem 1rem', alignItems:'center'}}>
                 <ArrowBackIcon sx={{cursor:'pointer'}} onClick={()=>onShowProfil(false)} />
                 <Typography variant='p' fontWeight='bold' fontSize='1.1rem'>Profil</Typography>
@@ -108,7 +110,7 @@ export default function Profil({displayName,infos , photoURL ,dispatch , onShowP
                
                 </Box>
               </Box>
-        </Paper>
+        </Box>
 
     </Slide>
       )

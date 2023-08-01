@@ -24,11 +24,15 @@ export default function Sidebar({id , signOut , user}) {
     const [userInfo , dispatch] = useReducer(reducer , {displayName:user.displayName , infos:'' , photoURL:user.photoURL})
 
     return (
-      <Paper  >
-          <Box height='100vh'  position={'relative'} >
+      <Box  >
+          <Box 
+              height='100vh' 
+              backgroundColor='primary.dark'  
+              position={'relative'} 
+          >
               <Box >
+               {/* <Typography  p={1} component='span' fontSize={12} color='grey' marginLeft='auto'> Your Id : {id}</Typography>  */}
                 <Topbar onShowContacts={setShowContacts} onShowProfil={setShowProfil} signOut={signOut} userPhoto={userInfo.photoURL}/>                        
-                <Typography  p={1} component='span' fontSize={12} color='grey' marginLeft='auto'> Your Id : {id}</Typography> 
               </Box>
               <Box  >
                   <Profil dispatch={dispatch} caption={userInfo.infos} photoURL={userInfo.photoURL} displayName={userInfo.displayName}  onShowProfil={setShowProfil} showProfil={showProfil}/>
@@ -37,6 +41,6 @@ export default function Sidebar({id , signOut , user}) {
                   
               </Box>
           </Box>           
-      </Paper>
+      </Box>
   )
 }

@@ -6,15 +6,21 @@ import { Navigate } from 'react-router-dom'
 import VerifyEmail from './VerifyEmail'
 import Sidebar from './sidebar/Sidebar'
 
-import { Divider, Grid } from '@mui/material'
+import { Divider, Grid , useMediaQuery , useTheme} from '@mui/material'
+
 import OpenDiscussion from './disscussion/OpenDiscussion'
+import OpenDiscussionMobile from './disscussion/OpenDiscussionMobile'
 
 import DiscussionsProvider from '../../providers/DiscussionsProvider'
 import ContactsProvider from '../../providers/ContactsProvider'
 import SocketProvider from '../../providers/SocketProvider'
 
+
 export default function Dashboard() {  
     const {user , signOut , resendVerificationEmail} = useAuth()
+    const theme= useTheme()
+    const matches = useMediaQuery(theme.breakpoints.up('sm'))
+    
 
     if(!user){
       return <Navigate replace to='/login'/>
@@ -32,14 +38,14 @@ export default function Dashboard() {
         <DiscussionsProvider>
           <ContactsProvider>
             
-            <Grid container spacing={0} overflow='hidden'>
-              <Grid item xs={3.7}>
+            <Grid container spacing={0}  overflow='hidden'>
+              <Grid item xs={12} md={3.7}>
                 <Sidebar id={id} signOut={signOut} user={user}/>      
               
               </Grid>
-    
-              <Grid item xs={8.3} >
-                  <OpenDiscussion id={id} /> 
+              
+              <Grid item  xs={12} md={8.3} >
+                  {matches ? <OpenDiscussion id={id} /> : <OpenDiscussionMobile id={id}/>} 
               </Grid>
             </Grid>
 

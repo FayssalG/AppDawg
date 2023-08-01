@@ -3,17 +3,25 @@ import React from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ArrowBack } from '@mui/icons-material'
 
-import {Box , Avatar , IconButton , AppBar , Toolbar , Typography} from '@mui/material'
+import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography} from '@mui/material'
 
-export default function TopbarDiscussion({recipients}) {
+export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,recipients}) {
   return (
-    <AppBar sx={{height:70}} position='static'>
+    <AppBar 
+      sx={{borderBottom:2, borderColor:'primary.main' , height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} 
+      position='static' 
+    >
     <Toolbar display='flex' sx={{alignItems:'center'}}>
-        {/* <Box> 
-          <IconButton>
-            <ArrowBack/>
-          </IconButton>
-        </Box> */}
+        { 
+        showDiscussion ?
+          <Box> 
+            <IconButton onClick={()=>onShowDiscussion(false)}>
+              <ArrowBack/>
+            </IconButton>
+          </Box> 
+          : null
+        }
+       
         <Box>
           <IconButton>
             <Avatar />
@@ -22,7 +30,7 @@ export default function TopbarDiscussion({recipients}) {
         
         <Box ml={1} mt={1}>
           <Typography variant='body1' lineHeight={.9}>{recipients[0].id}</Typography>
-          <Typography variant='caption' color='grey'>Online</Typography>
+          <Typography variant='caption' >Online</Typography>
         </Box>            
 
         <Box ml='auto' >

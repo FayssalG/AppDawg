@@ -8,7 +8,7 @@ export default function OneContact({onClick  , children}) {
     }}}>
         <ListItem sx={{px:1 , height:'80px'}}>
             <ListItemAvatar >
-                <Avatar sx={{mr:2,width:60 , height:60 }}  />
+                <Avatar sx={{mr:2,width:50 , height:50 }}  />
             </ListItemAvatar>
                     
             <ListItemText  sx={{py:4,borderBottom:'solid 1px #2A3942'}} primary={

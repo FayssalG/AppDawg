@@ -41,7 +41,8 @@ export default function Contacts({onShowContacts , showContacts}) {
 
     return (
       <Slide direction="right" in={showContacts} mountOnEnter unmountOnExit>
-        <Paper
+        <Box
+          backgroundColor='primary.dark' 
           sx={{
             position: "absolute",
             zIndex: 2,
@@ -56,7 +57,7 @@ export default function Contacts({onShowContacts , showContacts}) {
           }}
         >
 
-          <AppBar position="static">
+          <AppBar sx={{backgroundColor:'topbar.main'}} position="static" >
             <Box sx={{display: "flex", gap: 4, p: "4rem 0 1rem 1rem", alignItems: "center" }}>
               <ArrowBackIcon sx={{ cursor: "pointer" }} onClick={() => onShowContacts(false)}/>
               <Typography variant="p" fontWeight="bold" fontSize="1.1rem">
@@ -95,7 +96,7 @@ export default function Contacts({onShowContacts , showContacts}) {
             </List>
           </Box>
 
-        </Paper>
+        </Box>
       </Slide>
     );
 }

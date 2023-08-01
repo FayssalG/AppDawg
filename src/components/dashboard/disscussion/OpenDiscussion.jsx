@@ -33,11 +33,15 @@ export default function OpenDiscussion({id}) {
   const messages = activeDiscussion.messages
 
   return (
-    <Box height='100vh' display='flex' flexDirection='column'  position='relative'>
+    <Box 
+      boxShadow='-.2px 0 0 grey' 
+      height='100vh' display='flex' 
+      flexDirection='column'  
+      position='relative'>
       
       <TopbarDiscussion recipients={activeDiscussion.recipients}/>
       
-      <Box  overflow='auto' px={4} py={2} display='flex' flexDirection='column'  gap={2}>
+      <Box  overflow='auto' px={2} py={2} display='flex' flexDirection='column'  gap={2}>
         {
           messages.map((msg , index)=>{
             const lastRef = messages.length - 1 === index
@@ -46,11 +50,15 @@ export default function OpenDiscussion({id}) {
         }
       </Box>
 
-      <Box padding={2} width='100%' marginTop='auto'>
+      <Box
+        backgroundColor='primary.dark'  
+        padding={1.5} 
+        width='100%' 
+        marginTop='auto' >
     
         <form onSubmit={handleMessageSend}>
-          <FormControl sx={{width:'100%'}} variant="standard"  >
-            <OutlinedInput  inputRef={messageInputRef} placeholder='message' endAdornment={
+          <FormControl sx={{width:'100%'}} variant="standard"   >
+            <OutlinedInput  sx={{height:45 ,boxShadow:'inset 0 0 4px #000814' , backgroundColor:'#1d3557' }} inputRef={messageInputRef} placeholder='message' endAdornment={
               <IconButton type='submit'>
                 <SendSharp/>
               </IconButton>

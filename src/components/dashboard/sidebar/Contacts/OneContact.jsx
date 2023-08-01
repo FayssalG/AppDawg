@@ -16,7 +16,7 @@ export default function OneContact({onShowContacts , contactName , contactId }) 
     }}}>
         <ListItem sx={{px:1 , height:'80px'}}>
             <ListItemAvatar >
-                <Avatar sx={{mr:2,width:60 , height:60 }}  />
+                <Avatar sx={{mr:2,width:50 , height:50 }}  />
             </ListItemAvatar>
                     
             <ListItemText sx={{py:2,borderTop:'solid 1px #2A3942'}} primary={

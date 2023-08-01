@@ -16,15 +16,15 @@ export default function Topbar({signOut , userPhoto  , id , onShowProfil , onSho
     }
 
   return (
-    <AppBar sx={{maxHeight:70}} position='static' >
+    <AppBar sx={{borderBottom:2 , borderColor:'primary.main', height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} position='static' >
               
         <Box sx={{p:1}}>        
             <Box  display='flex' alignItems='center' justifyContent='space-between'>
-                <Box>
-                    <IconButton  onClick={()=>onShowProfil(true)} >
-                        <Avatar src={userPhoto}></Avatar>
-                    </IconButton>                
-                </Box>    
+               
+                <IconButton sx={{border:2 ,p:.5, borderColor:'primary.main'}} onClick={()=>onShowProfil(true)} >
+                    <Avatar  src={userPhoto}></Avatar>
+                </IconButton>                
+               
                 <Box>
                     <IconButton onClick={()=>onShowContacts(true)}>
                         <MessageIcon/>
