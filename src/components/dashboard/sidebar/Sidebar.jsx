@@ -31,8 +31,8 @@ export default function Sidebar({id , signOut , user}) {
               position={'relative'} 
           >
               <Box >
-               {/* <Typography  p={1} component='span' fontSize={12} color='grey' marginLeft='auto'> Your Id : {id}</Typography>  */}
                 <Topbar onShowContacts={setShowContacts} onShowProfil={setShowProfil} signOut={signOut} userPhoto={userInfo.photoURL}/>                        
+                <Typography  p={1} component='span' fontSize={12} color='grey' marginLeft='auto'> Your Id : {id}</Typography> 
               </Box>
               <Box  >
                   <Profil dispatch={dispatch} caption={userInfo.infos} photoURL={userInfo.photoURL} displayName={userInfo.displayName}  onShowProfil={setShowProfil} showProfil={showProfil}/>
