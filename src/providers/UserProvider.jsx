@@ -37,7 +37,7 @@ export default function UserProvider({children}) {
   const {user} = useAuth()
  
 
-  const [userData , dispatch] = useReducer(reducer ,{})
+  const [userData , dispatch] = useReducer(reducer ,{displayName:'' , infos:'' , photoURL:''})
   const [id] = useChatId(user)
 
 

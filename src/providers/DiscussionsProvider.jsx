@@ -1,6 +1,7 @@
 import React , {useContext ,useState, createContext, useEffect , useCallback} from 'react'
 import useLocalStorage from '../hooks/useLocalStorage'
 import { useSocket } from './SocketProvider'
+import {useUser} from './UserProvider'
 
 const DiscussionsContext = createContext()
 
@@ -25,7 +26,10 @@ function compareArrays(a , b){
 
 
 
-export default function DiscussionsProvider({children}) {   
+export default function DiscussionsProvider({children}) {
+    const {id} = useUser()   
+    const userId = id
+
     const [discussions , setDiscussions] = useState([])   
     const socket = useSocket()
 
@@ -41,7 +45,8 @@ export default function DiscussionsProvider({children}) {
         newDiscussions.forEach((discussion)=>{
             discussion.isActive = false
         })
-        newDiscussions.push({recipients , messages:[] , isActive:true})
+        const discussionId = userId + recipients.map((r)=>r.id).join('')
+        newDiscussions.push({discussionId:discussionId , recipients , messages:[] , isActive:true})
         setDiscussions(newDiscussions)
     }
 
@@ -58,8 +63,8 @@ export default function DiscussionsProvider({children}) {
 
 
 
-    function addMessageToDiscussion(recipients , message){
-        socket.emit('send-message' , {recipients , message})
+    function addMessageToDiscussion(discussionId , recipients , message){
+        socket.emit('send-message' , {discussionId , recipients , message})
         const newDiscussions = [...discussions]
             newDiscussions.forEach((discussion)=>{
                 if(discussion.isActive == true){
@@ -70,11 +75,16 @@ export default function DiscussionsProvider({children}) {
     }
 
     
+    const addRetrievedDiscussion = useCallback(({discussionId , recipients , messages})=>{
+        const newDiscussions = [...discussions]
+        newDiscussions.push({discussionId :discussionId , recipients:recipients , messages:[...messages] , isActive:false})
+        setDiscussions(newDiscussions)
     
+    },[discussions])
 
-    const addRecievedMessageToDiscussion = useCallback( ({recipients , message})=>{
+    const addRecievedMessageToDiscussion = useCallback( ({discussionId , recipients , message})=>{
         const isDiscussionExist = findDiscussionByRecipients(recipients) 
-
+        
         if(isDiscussionExist){
             const newDiscussions = [...discussions]
             newDiscussions.forEach((discussion)=>{
@@ -83,13 +93,12 @@ export default function DiscussionsProvider({children}) {
                 }
             })
             console.log('new Discussions in case there is a discussion')
-            console.log(newDiscussions)
             
             setDiscussions(newDiscussions)
         }
         else{        
             const newDiscussions = [...discussions]
-            newDiscussions.push({recipients:recipients , messages:[message] , isActive:false})
+            newDiscussions.push({discussionId :discussionId , recipients:recipients , messages:[message] , isActive:false})
            
             setDiscussions(newDiscussions)
         }
@@ -99,8 +108,9 @@ export default function DiscussionsProvider({children}) {
 
     useEffect(()=>{
         if(socket == null) return
+        socket.on('retrieve-discussion' , addRetrievedDiscussion)
         socket.on('recieve-message' , addRecievedMessageToDiscussion)
-
+        
         return ()=>socket.off('recieve-message')
     },[socket , addMessageToDiscussion])
 

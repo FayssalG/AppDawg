@@ -33,7 +33,7 @@ export default function OpenDiscussion() {
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
     if(messageContent == '') return
-    addMessageToDiscussion(activeDiscussion.recipients ,  {senderId:id,senderName:userData.displayName , content:messageContent })
+    addMessageToDiscussion(activeDiscussion.discussionId , activeDiscussion.recipients ,  {senderId:id,senderName:userData.displayName , content:messageContent })
     messageInputRef.current.value = ''
   }
   
