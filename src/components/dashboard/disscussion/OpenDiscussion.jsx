@@ -7,9 +7,11 @@ import { SendSharp  } from '@mui/icons-material'
 import { Box ,  FormControl , OutlinedInput , IconButton } from '@mui/material'
 import { useAuth } from '../../../providers/AuthProvider'
 import { useDiscussions } from '../../../providers/DiscussionsProvider'
+import { useUser } from '../../../providers/UserProvider';
 
-export default function OpenDiscussion({id}) {
-  const {user} = useAuth()
+export default function OpenDiscussion() {
+  
+  const {userData , id} = useUser()
   const {addMessageToDiscussion , activeDiscussion} = useDiscussions()
 
   const setRef = useCallback((element)=>{
@@ -26,7 +28,7 @@ export default function OpenDiscussion({id}) {
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
     if(messageContent == '') return
-    addMessageToDiscussion(activeDiscussion.recipients ,  {senderId:id,senderName:user.displayName , content:messageContent })
+    addMessageToDiscussion(activeDiscussion.recipients ,  {senderId:id,senderName:userData.displayName , content:messageContent })
     messageInputRef.current.value = ''
   }
   

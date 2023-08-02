@@ -21,7 +21,7 @@ export default function Topbar({signOut , userPhoto  , id , onShowProfil , onSho
         <Box sx={{p:1}}>        
             <Box  display='flex' alignItems='center' justifyContent='space-between'>
                
-                <IconButton sx={{border:1 , p:.4, borderColor:'primary.dark'}} onClick={()=>onShowProfil(true)} >
+                <IconButton sx={{border:1 , p:.4}} onClick={()=>onShowProfil(true)} >
                     <Avatar sx={{width:45 , height:45}}  src={userPhoto}></Avatar>
                 </IconButton>                
                

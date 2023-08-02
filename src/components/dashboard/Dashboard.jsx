@@ -49,7 +49,7 @@ export default function Dashboard() {
               </Grid>
               
               <Grid item  xs={12} md={8.3} sx={{backgroundImage:`url('${background}')` , backgroundPosition:'center'}}>
-                  {matches ? <OpenDiscussion id={id} /> : <OpenDiscussionMobile id={id}/>} 
+                  {matches ? <OpenDiscussion /> : <OpenDiscussionMobile />} 
               </Grid>
             </Grid>
 

@@ -2,7 +2,7 @@ import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import Dashboard from './components/dashboard/Dashboard'
 
-import { Route , Routes } from 'react-router-dom'
+import { Navigate, Route , Routes } from 'react-router-dom'
 
 import { ThemeProvider , createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline';
@@ -30,25 +30,27 @@ const theme = createTheme({
 })
 
 function App() {
-  const {isPending} = useAuth()
+  const {user , isPending} = useAuth()
   
   if(isPending) return
 
   
   return (
-    <UserProvider>
         <ThemeProvider theme={theme}> 
   
           <CssBaseline enableColorScheme/>
           <Routes>
             <Route path='/login' element={<Login/>}></Route>  
             <Route path='/signup' element={<Signup/>}></Route>  
-            <Route path='/' element={<Dashboard />}></Route>  
+            <Route path='/' element={
+                user ? <UserProvider><Dashboard /></UserProvider> 
+                     : <Navigate replace to='/login' />}
+            >
+            </Route>  
           </Routes>
           
         </ThemeProvider> 
 
-    </UserProvider>
   )
 
 

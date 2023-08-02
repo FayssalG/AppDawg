@@ -3,7 +3,7 @@ import React, { useReducer, useRef, useState } from 'react'
 import EditSharpIcon from '@mui/icons-material/EditSharp';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DoneIcon from '@mui/icons-material/Done';
-import {Paper,Slide , Box , Avatar , IconButton , Badge , TextField, Typography , AppBar, FormControl, Input , InputLabel , InputAdornment} from '@mui/material'
+import {Slide , Box , Avatar , IconButton , Badge , TextField, Typography , AppBar, FormControl, Input , InputLabel , InputAdornment} from '@mui/material'
 import { useAuth } from '../../../providers/AuthProvider';
 import { useUser } from '../../../providers/UserProvider';
 

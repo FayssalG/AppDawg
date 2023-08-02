@@ -1,5 +1,6 @@
 import React, {createContext, useContext , useEffect, useReducer, useState} from 'react'
 
+
 import { useAuth } from './AuthProvider'
 import useChatId from '../hooks/useChatId'
 
@@ -9,6 +10,7 @@ import {getDownloadURL,uploadBytes  , getStorage} from 'firebase/storage'
 import {ref as storeRef  } from 'firebase/storage'
  
 import {db} from '../config/firebase'
+import { Navigate } from 'react-router-dom'
 
 const UserContext = createContext()
 
@@ -33,11 +35,9 @@ function reducer(state , action){
 
 export default function UserProvider({children}) {
   const {user} = useAuth()
-  if(!user){
-    return
-  }
+ 
 
-  const [userData , dispatch] = useReducer(reducer ,{displayName:user.displayName , photoURL:user.photoURL , uid:user.uid , chatId:user.chatId , infos:user.infos})
+  const [userData , dispatch] = useReducer(reducer ,{})
   const [id] = useChatId(user)
 
 

@@ -9,7 +9,7 @@ export function useDiscussions(){
 }
 
 
-  function compareArrays(a , b){   
+function compareArrays(a , b){   
     if(a.length != b.length) return false
     a.sort((a , b)=>{
         return a.id < b.id

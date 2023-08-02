@@ -8,9 +8,10 @@ import {Slide , Box ,  FormControl , OutlinedInput , IconButton } from '@mui/mat
 import { useAuth } from '../../../providers/AuthProvider'
 import { useDiscussions } from '../../../providers/DiscussionsProvider'
 import Discussions from '../sidebar/Discussions/Discussions';
+import { useUser } from '../../../providers/UserProvider';
 
-export default function OpenDiscussion({id}) {
-  const {user} = useAuth()
+export default function OpenDiscussion() {
+  const {userData , id} = useUser()
   const {addMessageToDiscussion, discussions , activeDiscussion} = useDiscussions()
 
   const [showDiscussion , setShowDiscussion] = useState(true)
@@ -32,7 +33,7 @@ export default function OpenDiscussion({id}) {
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
     if(messageContent == '') return
-    addMessageToDiscussion(activeDiscussion.recipients ,  {senderId:id,senderName:user.displayName , content:messageContent })
+    addMessageToDiscussion(activeDiscussion.recipients ,  {senderId:id,senderName:userData.displayName , content:messageContent })
     messageInputRef.current.value = ''
   }
   

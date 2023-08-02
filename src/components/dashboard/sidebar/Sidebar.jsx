@@ -6,16 +6,7 @@ import Profil from './Profil'
 import Contacts from './Contacts/Contacts'
 import Discussions from './Discussions/Discussions'
 
-function reducer(state , action){
-    switch(action.type){
-      case 'displayname':
-        return {...state , displayName:action.payload};
-      case 'infos':
-        return {...state , caption:action.payload};
-      case 'photourl':
-        return {...state , photoURL:action.payload};
-    }
-  }
+
 
 export default function Sidebar({id , signOut , userData}) {
     const [showProfil , setShowProfil] = useState(false) 

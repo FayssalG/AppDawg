@@ -5,10 +5,6 @@ import {db} from '../config/firebase'
 
 import useLocalStorage from './useLocalStorage'
 
-
-
-
-
   async function storeId(user  , chatId){
 
         try{    
@@ -42,10 +38,10 @@ export default function useChatId(user){
         async function settingId(){
             let data
             const dbRef = ref(db)
-            const snapshot = await get(child(dbRef , `users/${user.uid}`))
+            const snapshot = await get(child(dbRef , `users/${user.uid}/chatId`))
             if(snapshot.exists()){
                 data = snapshot.val()
-                setId(data.chatId)
+                setId(data)
             }else{
                 console.log('No data')
                 let newId = generateId()
