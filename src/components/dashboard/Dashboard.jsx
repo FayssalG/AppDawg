@@ -20,7 +20,8 @@ import { useUser } from '../../providers/UserProvider'
 
 export default function Dashboard() {  
     const { signOut , resendVerificationEmail} = useAuth()
-    const {user , id} = useUser()
+    const {userData , user , id} = useUser()
+
     const theme= useTheme()
     const matches = useMediaQuery(theme.breakpoints.up('sm'))
     
@@ -43,7 +44,7 @@ export default function Dashboard() {
             
             <Grid container spacing={0}  overflow='hidden' >
               <Grid item xs={12} md={3.7} >
-                <Sidebar id={id} signOut={signOut} user={user}/>      
+                <Sidebar id={id} signOut={signOut} userData={userData}/>      
               
               </Grid>
               

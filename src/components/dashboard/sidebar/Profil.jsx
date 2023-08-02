@@ -5,12 +5,15 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DoneIcon from '@mui/icons-material/Done';
 import {Paper,Slide , Box , Avatar , IconButton , Badge , TextField, Typography , AppBar, FormControl, Input , InputLabel , InputAdornment} from '@mui/material'
 import { useAuth } from '../../../providers/AuthProvider';
+import { useUser } from '../../../providers/UserProvider';
 
 
 
 
-export default function Profil({displayName,infos , photoURL ,dispatch , onShowProfil , showProfil }) {
-  const {updateDisplayName , updatePhotoURL} = useAuth()
+export default function Profil({  onShowProfil , showProfil }) {
+  const {updateDisplayName , updatePhotoURL , updateInfos , dispatch , userData} = useUser()
+  const {photoURL , displayName , infos} = userData
+
   const displayNameRef = useRef(null)
   const infosRef = useRef(null)
   const photoRef = useRef(null)
@@ -28,8 +31,11 @@ export default function Profil({displayName,infos , photoURL ,dispatch , onShowP
     dispatch({type:'displayname' , payload:displayNameRef.current.value})
   }
 
+  
   function handleUpdateInfos(){
     setShowInfosInput(false)
+    updateInfos(infosRef.current.value)
+    dispatch({type:'infos' , payload:infosRef.current.value})
   }
 
   const [showNameInput , setShowNameInput] = useState(false)

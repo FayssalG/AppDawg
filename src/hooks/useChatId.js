@@ -1,6 +1,6 @@
 import React, { useEffect , useState} from 'react'
 import {collection ,query , where, getDocs, addDoc , } from 'firebase/firestore'
-import {getDatabase , ref , set ,get , child} from 'firebase/database'
+import {  ref , set ,get , child} from 'firebase/database'
 import {db} from '../config/firebase'
 
 import useLocalStorage from './useLocalStorage'
@@ -16,7 +16,8 @@ import useLocalStorage from './useLocalStorage'
                 uid : user.uid,
                 chatId : chatId,
                 photoURL: user.photoURL,
-                infos : 'Hi Im new to AppDawg'
+                infos : 'Hi Im new to AppDawg',
+                displayName : user.displayName
             })
         }catch(err){
             console.log(user.uid)

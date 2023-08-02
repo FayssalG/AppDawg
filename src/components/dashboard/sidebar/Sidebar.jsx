@@ -10,18 +10,17 @@ function reducer(state , action){
     switch(action.type){
       case 'displayname':
         return {...state , displayName:action.payload};
-      case 'caption':
+      case 'infos':
         return {...state , caption:action.payload};
       case 'photourl':
         return {...state , photoURL:action.payload};
     }
   }
 
-export default function Sidebar({id , signOut , user}) {
+export default function Sidebar({id , signOut , userData}) {
     const [showProfil , setShowProfil] = useState(false) 
     const [showContacts , setShowContacts] = useState(false)
 
-    const [userInfo , dispatch] = useReducer(reducer , {displayName:user.displayName , infos:'' , photoURL:user.photoURL})
 
     return (
       <Box  >
@@ -31,11 +30,11 @@ export default function Sidebar({id , signOut , user}) {
               position={'relative'} 
           >
               <Box >
-                <Topbar onShowContacts={setShowContacts} onShowProfil={setShowProfil} signOut={signOut} userPhoto={userInfo.photoURL}/>                        
+                <Topbar onShowContacts={setShowContacts} onShowProfil={setShowProfil} signOut={signOut} userPhoto={userData.photoURL}/>                        
                 <Typography  p={1} component='span' fontSize={12} color='grey' marginLeft='auto'> Your Id : {id}</Typography> 
               </Box>
               <Box  >
-                  <Profil dispatch={dispatch} caption={userInfo.infos} photoURL={userInfo.photoURL} displayName={userInfo.displayName}  onShowProfil={setShowProfil} showProfil={showProfil}/>
+                  <Profil    onShowProfil={setShowProfil} showProfil={showProfil}/>
                   <Contacts onShowContacts={setShowContacts} showContacts={showContacts} />
                   <Discussions/>
                   
