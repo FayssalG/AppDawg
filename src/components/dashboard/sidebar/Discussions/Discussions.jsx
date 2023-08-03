@@ -8,8 +8,9 @@ export default function Discussions() {
     const {discussions } = useDiscussions()
     
     return (
-    <Box overflow='auto' sx={{maxHeight:'90vh', width:'100%', pb:4,display:'flex' , flexDirection : 'column' , alignItems: 'center' }}>
+    <Box overflow='auto' sx={{maxHeight:'79vh', width:'100%', pb:4,display:'flex' , flexDirection : 'column' , alignItems: 'center' }}>
         
+
         <Box sx={{width:'100%'}}>
             <List >
                 {
@@ -18,7 +19,17 @@ export default function Discussions() {
                         return <OneDiscussion key={index}  active={discussion.isActive} recipients={discussion.recipients[0]} lastMsg={'Hi mark'}/>
                     })
                 }
-        
+                {/* <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>
+                <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>
+                <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>
+                <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>
+                <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>
+                <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>
+                <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>
+                <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>
+                <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>
+                <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/> */}
+            
             </List>
         </Box>
         

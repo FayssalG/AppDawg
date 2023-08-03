@@ -37,8 +37,9 @@ export default function OpenDiscussion() {
   return (
     <Box 
     
-      boxShadow='-.2px 0 0 grey' 
-      height='100vh' display='flex' 
+      //boxShadow='-.2px 0 0 grey'
+      height='94vh' 
+      display='flex' 
       flexDirection='column'  
       position='relative'>
       
@@ -54,14 +55,15 @@ export default function OpenDiscussion() {
       </Box>
 
       <Box
+        borderRadius='10px'
         backgroundColor='primary.dark'  
         padding={1.5} 
         width='100%' 
         marginTop='auto' >
     
-        <form onSubmit={handleMessageSend}>
+        <form onSubmit={handleMessageSend} >
           <FormControl sx={{width:'100%'}} variant="standard"   >
-            <OutlinedInput  sx={{height:45  }} inputRef={messageInputRef} placeholder='message' endAdornment={
+            <OutlinedInput  sx={{height:45,  }} inputRef={messageInputRef} placeholder='message' endAdornment={
               <IconButton type='submit'>
                 <SendSharp/>
               </IconButton>

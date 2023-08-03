@@ -23,7 +23,7 @@ export default function Dashboard() {
     const {userData , user , id} = useUser()
 
     const theme= useTheme()
-    const matches = useMediaQuery(theme.breakpoints.up('sm'))
+    const matches = useMediaQuery(theme.breakpoints.up('md'))
     
     if(!user){
       return <Navigate replace to='/login'/>
@@ -36,19 +36,19 @@ export default function Dashboard() {
     //   )
     // }
 
-    
+
     return (     
       <SocketProvider id={id}>         
         <DiscussionsProvider>
           <ContactsProvider>
-            
-            <Grid container spacing={0}  overflow='hidden' >
-              <Grid item xs={12} md={3.7} >
+           
+            <Grid container spacing={2}  overflow='hidden' backgroundColor='primary.dark' padding={2}  >
+              <Grid item xs={12} md={3.7}  >
                 <Sidebar id={id} signOut={signOut} userData={userData}/>      
               
               </Grid>
               
-              <Grid item  xs={12} md={8.3} sx={{backgroundImage:`url('${background}')` , backgroundPosition:'center'}}>
+              <Grid item  xs={0} md={8.3} sx={{ backgroundImage:`url('${background}')` , backgroundRepeat:'no-repeat',backgroundSize:'cover', backgroundPosition:'center'}}>
                   {matches ? <OpenDiscussion /> : <OpenDiscussionMobile />} 
               </Grid>
             </Grid>

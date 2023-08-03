@@ -7,9 +7,9 @@ import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography} from 
 
 export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,recipients}) {
   return (
-    <Box 
+    <AppBar 
       
-      sx={{ borderColor:'primary.main' , height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} 
+      sx={{ borderRadius:'10px', borderColor:'primary.main' , height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} 
       position='static' 
     >
     <Toolbar display='flex' sx={{py:1,alignItems:'center'}}>
@@ -42,7 +42,7 @@ export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,rec
       
     </Toolbar>      
   
-  </Box>
+  </AppBar>
 
   )
 }

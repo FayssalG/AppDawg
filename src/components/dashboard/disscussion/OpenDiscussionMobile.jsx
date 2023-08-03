@@ -43,9 +43,11 @@ export default function OpenDiscussion() {
     <Slide sx={{position:'fixed' , top:0 , right:0,width:'100%'}} direction='left' in={showDiscussion} unmountOnExit mountOnEnter>
 
         <Box 
+          height='98vh' 
+          padding={2} 
+
           backgroundColor='primary.dark'
           boxShadow='-.2px 0 0 grey' 
-          height='90vh' 
           display='flex' 
           flexDirection='column'  
           position='relative'>

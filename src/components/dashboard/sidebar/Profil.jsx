@@ -47,9 +47,11 @@ export default function Profil({  onShowProfil , showProfil }) {
           backgroundColor='primary.dark' 
           sx={{position:'absolute',zIndex:2,height:'100%', width:'100%', left:0,top:0 ,display:'flex' , flexDirection : 'column' , alignItems: 'center' }}>
 
-            <AppBar sx={{backgroundColor:'topbar.main'}} position='static' >
+            <AppBar sx={{borderRadius:'10px', backgroundColor:'topbar.main'}} position='static' >
               <Box sx={{display:'flex' ,gap:4 , p:'4rem 0 1rem 1rem', alignItems:'center'}}>
-                <ArrowBackIcon sx={{cursor:'pointer'}} onClick={()=>onShowProfil(false)} />
+                <IconButton onClick={()=>onShowProfil(false)}>
+                  <ArrowBackIcon sx={{cursor:'pointer'}}  />
+                </IconButton>
                 <Typography variant='p' fontWeight='bold' fontSize='1.1rem'>Profil</Typography>
               </Box>
             </AppBar>

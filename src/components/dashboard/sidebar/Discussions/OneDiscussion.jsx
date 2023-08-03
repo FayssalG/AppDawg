@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import {IconButton ,Box,Avatar,ListItem,ListItemAvatar,ListItemText,Typography, Divider,Menu, Popper, Stack , Slide, Paper, ClickAwayListener , MenuList, MenuItem} from '@mui/material'
+import {IconButton ,Box,Avatar,ListItem,ListItemAvatar,ListItemText,Typography, Divider,Menu, Popper, Stack , Slide, Paper, ClickAwayListener , MenuList, MenuItem, Grow} from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { useDiscussions } from '../../../../providers/DiscussionsProvider'
@@ -27,7 +27,9 @@ export default function OneDiscussion({active , recipients , latestMsg}) {
   const [open , setOpen] = useState(false)
   const anchorRef = useRef(null)
 
-  function handleToggle(){
+  function handleToggle(e){
+    e.stopPropagation()
+    
     setOpen((prev)=>!prev)
   }
  
@@ -39,54 +41,55 @@ export default function OneDiscussion({active , recipients , latestMsg}) {
   }
 
   return (
-    <Box   backgroundColor={active || hover ? '#2A3942' : ''}  onClick={handleOpenDiscussion} sx={{ cursor:'pointer'}}>
+    <>
+      <Box  borderRadius={'10px'} backgroundColor={active || hover ? '#2A3942' : ''}  onClick={handleOpenDiscussion} sx={{ cursor:'pointer'}}>
 
-      <ListItem 
-        onMouseLeave={handleMouseLeave} onMouseEnter={handleMouseEnter}
-        sx={{backposition:'relative',px:1 , height:65 , overflow:'hidden'}}
-        secondaryAction={
-            <Box ref={anchorRef} sx={{translate:10}}>
-                <Slide direction='left' in={hover}>
+        <ListItem 
+          onMouseLeave={handleMouseLeave} onMouseEnter={handleMouseEnter}
+          sx={{px:1 , height:65 , overflow:'hidden'}}
+          secondaryAction={
+              <Box ref={anchorRef} >
+                  <Slide direction='left'  in={hover}>
                       <IconButton  onClick={handleToggle} >
                         <ExpandMoreIcon/>
                       </IconButton>
-                    
-                </Slide> 
-            </Box>
-           
-          
-        }
-      >
+                  </Slide> 
+              </Box>      
+          }
+        >
+        
+
+          <ListItemAvatar >
+              <Avatar sx={{mr:2,width:50 , height:50}} />
+          </ListItemAvatar>
+        
+          <ListItemText primary={
+              <>
+                  <Typography  >{recipients.name}</Typography>
+                  <Typography variant='caption' color='grey'>{latestMsg}</Typography>
+              </>
+              } 
+          />
+            <Divider sx={{position:'absolute' , bottom:0 , right:5 , width:'85%' }}/>
+        </ListItem>
       
 
-        <ListItemAvatar >
-            <Avatar sx={{mr:2,width:50 , height:50}} />
-        </ListItemAvatar>
-      
-        <ListItemText primary={
-            <>
-                <Typography  >{recipients.name}</Typography>
-                <Typography variant='caption' color='grey'>{latestMsg}</Typography>
-            </>
-            } 
-         />
-            
-          <Divider sx={{position:'absolute' , bottom:0 , right:0 , width:'85%' }}/>
-      
-      </ListItem>
+      </Box>
 
       {/* Drop menu */}
-      <Menu  open={open} anchorOrigin={{vertical:'bottom' , horizontal:'left'}} anchorEl={anchorRef.current}>
-        <ClickAwayListener onClickAway={handleClose}>
-            <MenuList sx={{width:200 , py:0}} >
-              <MenuItem >Delete</MenuItem>
-            </MenuList>
-        </ClickAwayListener>
-      </Menu>
-
-    </Box>
+      <Popper  open={open} anchorOrigin={{vertical:'bottom' , horizontal:'right'}} anchorEl={anchorRef.current}>
+        <Grow in={open}>
+          <Paper>
+            <ClickAwayListener onClickAway={handleClose}>
+                <MenuList sx={{width:140 , py:0}} >
+                  <MenuItem >Delete</MenuItem>
+                </MenuList>
+            </ClickAwayListener>
+          </Paper>
+        </Grow>
+      </Popper>
     
-
+    </>
 
 
   )

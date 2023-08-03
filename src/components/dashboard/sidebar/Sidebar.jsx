@@ -15,10 +15,10 @@ export default function Sidebar({id , signOut , userData}) {
 
     return (
       <Box  >
-          <Box 
-              height='100vh' 
-              backgroundColor='primary.dark'  
-              position={'relative'} 
+          <Box
+            height='94vh' 
+            //backgroundColor='primary.dark'  
+            position={'relative'} 
           >
               <Box >
                 <Topbar onShowContacts={setShowContacts} onShowProfil={setShowProfil} signOut={signOut} userPhoto={userData.photoURL}/>                        

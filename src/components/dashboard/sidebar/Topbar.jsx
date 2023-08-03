@@ -16,9 +16,9 @@ export default function Topbar({signOut , userPhoto  , id , onShowProfil , onSho
     }
 
   return (
-    <Box sx={{ borderColor:'primary.main', height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} position='static' >
+    <AppBar sx={{  borderRadius:'10px', height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} position='static' >
               
-        <Box sx={{p:1}}>        
+        <Box sx={{  p:1}}>        
             <Box  display='flex' alignItems='center' justifyContent='space-between'>
                
                 <IconButton sx={{border:1 , p:.4}} onClick={()=>onShowProfil(true)} >
@@ -42,6 +42,6 @@ export default function Topbar({signOut , userPhoto  , id , onShowProfil , onSho
 
 
         </Box>
-    </Box>
+    </AppBar>
   )
 }

@@ -17,7 +17,7 @@ export default function OneContact({onShowContacts , contactDetails }) {
 
 
     return (
-    <Box sx={{cursor:'pointer'}} backgroundColor={hover ? '#2A3942' : ''}  onClick={handleOpenDiscussion} onMouseLeave={()=>setHover(false)} onMouseEnter={()=>setHover(true)} >
+    <Box sx={{borderRadius:'10px',cursor:'pointer'}} backgroundColor={hover ? '#2A3942' : ''}  onClick={handleOpenDiscussion} onMouseLeave={()=>setHover(false)} onMouseEnter={()=>setHover(true)} >
         <ListItem sx={{px:1 , height:'80px'}}>
             <ListItemAvatar >
                 <Avatar sx={{mr:2,width:50 , height:50 }}  />

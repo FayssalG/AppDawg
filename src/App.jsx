@@ -16,13 +16,13 @@ const theme = createTheme({
     primary:{
       main:  '#C84B31',
       light:'#caf0f8',
-      dark: '#010811'
+      dark: '#131222'
     },
     secondary : {
       main :'#55dde0',
     },
     topbar :{
-      main:'#0d233a'
+      main:'#116D6E'
     } ,
  
 
