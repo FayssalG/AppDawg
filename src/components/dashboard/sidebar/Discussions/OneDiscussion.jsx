@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import {IconButton ,Box,Avatar,ListItem,ListItemAvatar,ListItemText,Typography, Divider,Menu, Popper, Stack , Slide, Paper, ClickAwayListener , MenuList, MenuItem, Grow} from '@mui/material'
+import {IconButton ,Box,Avatar,ListItem,ListItemAvatar,ListItemText,Typography, Divider, Popper,   Slide, Paper, ClickAwayListener , MenuList, MenuItem, Grow } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { useDiscussions } from '../../../../providers/DiscussionsProvider'
 
-export default function OneDiscussion({active , recipients , latestMsg}) {
+export default function OneDiscussion({active , recipient , latestMsg}) {
   const {openOldDiscussion} = useDiscussions()
+  
   function handleOpenDiscussion(e){
-    openOldDiscussion([recipients] )
+    openOldDiscussion(recipient )
   }
 
 
@@ -21,7 +22,6 @@ export default function OneDiscussion({active , recipients , latestMsg}) {
     setHover(false)
   }
   
-
   //discussion manage logic (delete discussion, mark messages as read , pin a discussion ... )
  
   const [open , setOpen] = useState(false)
@@ -65,7 +65,7 @@ export default function OneDiscussion({active , recipients , latestMsg}) {
         
           <ListItemText primary={
               <>
-                  <Typography  >{recipients.name}</Typography>
+                  <Typography  >{recipient.name}</Typography>
                   <Typography variant='caption' color='grey'>{latestMsg}</Typography>
               </>
               } 

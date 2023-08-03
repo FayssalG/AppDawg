@@ -16,7 +16,7 @@ export default function Discussions() {
                 {
                     discussions.map((discussion , index)=>{
                         if(discussion.messages.length == 0) return null
-                        return <OneDiscussion key={index}  active={discussion.isActive} recipients={discussion.recipients[0]} lastMsg={'Hi mark'}/>
+                        return <OneDiscussion key={index}  active={discussion.isActive} recipient={discussion.recipient} lastMsg={'Hi mark'}/>
                     })
                 }
                 {/* <OneDiscussion   active={false} recipients={{id:'YDZHH' , name:'smayka'}} lastMsg={'Hi mark'}/>

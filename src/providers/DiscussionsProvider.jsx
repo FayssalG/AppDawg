@@ -33,11 +33,10 @@ export default function DiscussionsProvider({children}) {
     const [discussions , setDiscussions] = useState([])   
     const socket = useSocket()
 
-    function openNewDiscussion(recipients){
-        let isDiscussionExist = findDiscussionByRecipients(recipients)
-        
+    function openNewDiscussion(recipient){
+        let isDiscussionExist = findDiscussionByRecipient(recipient)
         if( isDiscussionExist){
-            openOldDiscussion(recipients)
+            openOldDiscussion(recipient)
             return
         }
 
@@ -45,16 +44,16 @@ export default function DiscussionsProvider({children}) {
         newDiscussions.forEach((discussion)=>{
             discussion.isActive = false
         })
-        const discussionId = userId + recipients.map((r)=>r.id).join('')
-        newDiscussions.push({discussionId:discussionId , recipients , messages:[] , isActive:true})
+        const discussionId = userId + recipient.id
+        newDiscussions.push({discussionId:discussionId , recipient , messages:[] , isActive:true})
         setDiscussions(newDiscussions)
     }
 
-    function openOldDiscussion(recipients){
+    function openOldDiscussion(recipient){
         const newDiscussions = [...discussions]
         newDiscussions.forEach((discussion)=>{
             discussion.isActive = false
-            if(compareArrays(discussion.recipients , recipients)){
+            if(discussion.recipient.id == recipient.id){
                 discussion.isActive = true
             }
         })
@@ -63,8 +62,8 @@ export default function DiscussionsProvider({children}) {
 
 
 
-    function addMessageToDiscussion(discussionId , recipients , message){
-        socket.emit('send-message' , {discussionId , recipients , message})
+    function addMessageToDiscussion(discussionId , recipient , message){
+        socket.emit('send-message' , {discussionId , recipient , message})
         const newDiscussions = [...discussions]
             newDiscussions.forEach((discussion)=>{
                 if(discussion.isActive == true){
@@ -75,20 +74,18 @@ export default function DiscussionsProvider({children}) {
     }
 
     
-    const addRetrievedDiscussion = useCallback(({discussionId , recipients , messages})=>{
-        const newDiscussions = [...discussions]
-        newDiscussions.push({discussionId :discussionId , recipients:recipients , messages:[...messages] , isActive:false})
-        setDiscussions(newDiscussions)
+    const addRetrievedDiscussion = useCallback(({discussionId , recipient , messages})=>{
+        setDiscussions((prev)=>[...prev , {discussionId :discussionId , recipient:recipient , messages:[...messages] , isActive:false}])
     
     },[discussions])
 
-    const addRecievedMessageToDiscussion = useCallback( ({discussionId , recipients , message})=>{
-        const isDiscussionExist = findDiscussionByRecipients(recipients) 
+    const addRecievedMessageToDiscussion = useCallback( ({discussionId , recipient , message})=>{
+        const isDiscussionExist = findDiscussionByRecipient(recipient) 
         
         if(isDiscussionExist){
             const newDiscussions = [...discussions]
             newDiscussions.forEach((discussion)=>{
-                if(compareArrays(discussion.recipients , recipients)){
+                if(recipient.id == discussion.recipient.id){
                     discussion.messages.push(message)
                 }
             })
@@ -97,10 +94,7 @@ export default function DiscussionsProvider({children}) {
             setDiscussions(newDiscussions)
         }
         else{        
-            const newDiscussions = [...discussions]
-            newDiscussions.push({discussionId :discussionId , recipients:recipients , messages:[message] , isActive:false})
-           
-            setDiscussions(newDiscussions)
+            setDiscussions((prev)=>[...prev , {discussionId :discussionId , recipient:recipient , messages:[message] , isActive:false}])
         }
     },[discussions])
 
@@ -111,8 +105,11 @@ export default function DiscussionsProvider({children}) {
         socket.on('retrieve-discussion' , addRetrievedDiscussion)
         socket.on('recieve-message' , addRecievedMessageToDiscussion)
         
-        return ()=>socket.off('recieve-message')
-    },[socket , addMessageToDiscussion])
+        return ()=>{
+            socket.off('recieve-message')
+            socket.off('retrieve-discussion')
+        }
+    },[socket  , addRetrievedDiscussion , addRecievedMessageToDiscussion])
 
 
     
@@ -131,9 +128,9 @@ export default function DiscussionsProvider({children}) {
         })
     }
 
-    function findDiscussionByRecipients(recipients){
+    function findDiscussionByRecipient(recipient){
         return discussions.find((d)=> {
-            return compareArrays(d.recipients , recipients)
+            return d.recipient.id == recipient.id
         }) 
     }
 

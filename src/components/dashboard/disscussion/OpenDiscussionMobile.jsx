@@ -33,7 +33,7 @@ export default function OpenDiscussion() {
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
     if(messageContent == '') return
-    addMessageToDiscussion(activeDiscussion.discussionId , activeDiscussion.recipients ,  {senderId:id,senderName:userData.displayName , content:messageContent })
+    addMessageToDiscussion(activeDiscussion.discussionId , activeDiscussion.recipient ,  {senderId:id,senderName:userData.displayName , content:messageContent })
     messageInputRef.current.value = ''
   }
   
@@ -52,7 +52,7 @@ export default function OpenDiscussion() {
           flexDirection='column'  
           position='relative'>
         
-        <TopbarDiscussion showDiscussion={showDiscussion} onShowDiscussion={setShowDiscussion} recipients={activeDiscussion.recipients}/>
+        <TopbarDiscussion showDiscussion={showDiscussion} onShowDiscussion={setShowDiscussion} recipient={activeDiscussion.recipient}/>
         
         <Box  overflow='auto' px={2} py={2} display='flex' flexDirection='column'  gap={2}>
             {
