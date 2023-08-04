@@ -1,7 +1,8 @@
-import React , {useContext ,useState, createContext, useEffect , useCallback} from 'react'
+import React , {useContext ,useState, createContext, useEffect , useCallback , useMemo} from 'react'
 import useLocalStorage from '../hooks/useLocalStorage'
 import { useSocket } from './SocketProvider'
 import {useUser} from './UserProvider'
+import {useContacts} from './ContactsProvider'
 
 const DiscussionsContext = createContext()
 
@@ -10,27 +11,14 @@ export function useDiscussions(){
 }
 
 
-function compareArrays(a , b){   
-    if(a.length != b.length) return false
-    a.sort((a , b)=>{
-        return a.id < b.id
-    })
-    b.sort((a , b)=>{
-        return a.id < b.id
-    })
-    let result = a.every((item , index)=>{
-        return item.id == b[index].id
-    }) 
-    return result
-}
-
-
 
 export default function DiscussionsProvider({children}) {
-    const {id} = useUser()   
+    const {id} = useUser()
+    const {contacts} = useContacts()   
     const userId = id
 
     const [discussions , setDiscussions] = useState([])   
+
     const socket = useSocket()
 
     function openNewDiscussion(recipient){
@@ -58,6 +46,8 @@ export default function DiscussionsProvider({children}) {
             }
         })
         setDiscussions(newDiscussions)
+
+        setShowDiscussion(true)
     }
 
 
@@ -72,6 +62,7 @@ export default function DiscussionsProvider({children}) {
             })
         setDiscussions(newDiscussions)
     }
+
 
     
     const addRetrievedDiscussion = useCallback(({discussionId , recipient , messages})=>{
@@ -99,6 +90,26 @@ export default function DiscussionsProvider({children}) {
     },[discussions])
 
 
+    function findActiveDiscussion(){
+        return discussions.find((discussion)=>{
+            return discussion.isActive == true
+        })
+    }
+
+    function findDiscussionByRecipient(recipient){
+        return discussions.find((d)=> {
+            return d.recipient.id == recipient.id
+        }) 
+    }
+
+    const filteredDiscussions= useMemo(()=>{
+        let newDiscussions = [...discussions]
+        newDiscussions.forEach((discussion)=>{
+            let exisitingContact = contacts.find((contact)=>contact.id === discussion.recipient.id)
+            if(exisitingContact) discussion.recipient.name = exisitingContact.name 
+        })
+        return newDiscussions
+    },[discussions , contacts])
 
     useEffect(()=>{
         if(socket == null) return
@@ -112,26 +123,22 @@ export default function DiscussionsProvider({children}) {
     },[socket  , addRetrievedDiscussion , addRecievedMessageToDiscussion])
 
 
-    
-    
+
+
+
+    const [showDiscussion , setShowDiscussion] = useState(false)  
+    /*
+        Used only in MobileView component to 
+        handle discussion visisbility on the screen
+    */
     const value = {
+        showDiscussion,setShowDiscussion,
         discussions, 
+        filteredDiscussions,
         openNewDiscussion , 
         openOldDiscussion,
         addMessageToDiscussion,
         activeDiscussion : findActiveDiscussion(),
-    }
-
-    function findActiveDiscussion(){
-        return discussions.find((discussion)=>{
-            return discussion.isActive == true
-        })
-    }
-
-    function findDiscussionByRecipient(recipient){
-        return discussions.find((d)=> {
-            return d.recipient.id == recipient.id
-        }) 
     }
 
 

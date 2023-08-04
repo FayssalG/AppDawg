@@ -5,7 +5,7 @@ import { useDiscussions } from '../../../../providers/DiscussionsProvider'
 
 
 export default function Discussions() {
-    const {discussions } = useDiscussions()
+    const {filteredDiscussions } = useDiscussions()
     
     return (
     <Box overflow='auto' sx={{maxHeight:'79vh', width:'100%', pb:4,display:'flex' , flexDirection : 'column' , alignItems: 'center' }}>
@@ -14,7 +14,7 @@ export default function Discussions() {
         <Box sx={{width:'100%'}}>
             <List >
                 {
-                    discussions.map((discussion , index)=>{
+                    filteredDiscussions.map((discussion , index)=>{
                         if(discussion.messages.length == 0) return null
                         return <OneDiscussion key={index}  active={discussion.isActive} recipient={discussion.recipient} lastMsg={'Hi mark'}/>
                     })

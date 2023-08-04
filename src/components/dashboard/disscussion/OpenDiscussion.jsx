@@ -1,24 +1,30 @@
 import React, { useCallback, useRef, useState } from 'react'
 import Message from './Message'
 import TopbarDiscussion from './TopbarDiscussion';
-
-import { SendSharp  } from '@mui/icons-material'
-
-import { Box ,  FormControl , OutlinedInput , IconButton } from '@mui/material'
 import { useAuth } from '../../../providers/AuthProvider'
 import { useDiscussions } from '../../../providers/DiscussionsProvider'
 import { useUser } from '../../../providers/UserProvider';
+import { useContacts } from '../../../providers/ContactsProvider';
+
+
+import { SendSharp  } from '@mui/icons-material'
+import { Box ,  FormControl , OutlinedInput , IconButton  , useMediaQuery , useTheme} from '@mui/material'
+import DesktopView from './DesktopView';
+import MobileView from './MobileView';
 
 export default function OpenDiscussion() {
+  const theme= useTheme()
+  const matches = useMediaQuery(theme.breakpoints.up('md'))
   
   const {userData , id} = useUser()
-  const {addMessageToDiscussion , activeDiscussion} = useDiscussions()
+  const {addMessageToDiscussion , discussions,activeDiscussion} = useDiscussions()
+  const {contacts , addContact} = useContacts()
+  const messageInputRef = useRef(null)
 
   const setRef = useCallback((element)=>{
     if(element) element.scrollIntoView({smooth:true})
   },[])
 
-  const messageInputRef = useRef(null)
 
   if(!activeDiscussion) return
 
@@ -33,46 +39,32 @@ export default function OpenDiscussion() {
   }
   
   const messages = activeDiscussion.messages
+  const contact = contacts.find((contact)=>{
+    return contact.id == activeDiscussion.recipient.id
+  })
 
   return (
-    <Box 
-    
-      //boxShadow='-.2px 0 0 grey'
-      height='94vh' 
-      display='flex' 
-      flexDirection='column'  
-      position='relative'>
-      
-      <TopbarDiscussion recipient={activeDiscussion.recipient}/>
-      
-      <Box  overflow='auto' px={2} py={2} display='flex' flexDirection='column'  gap={2}>
-        {
-          messages.map((msg , index)=>{
-            const lastRef = messages.length - 1 === index
-            return  <Message key={index} messageRef={lastRef ? setRef : null}  userId={id} senderId={msg.senderId} senderName={msg.senderName} content={msg.content}/>
-          })
-        }
-      </Box>
+    <>
+      { matches ?
+          <DesktopView 
+                id={id}
+                messageInputRef={messageInputRef}
+                handleMessageSend={handleMessageSend} 
+                activeDiscussion={activeDiscussion}  
+                messages={messages}
+                contact={contact}
+                />
+          :
+            <MobileView
+                id={id}
+                messageInputRef={messageInputRef}
+                handleMessageSend={handleMessageSend} 
+                activeDiscussion={activeDiscussion}  
+                messages={messages}
+                contact={contact}
+            />
+      }
 
-      <Box
-        borderRadius='10px'
-        backgroundColor='primary.dark'  
-        padding={1.5} 
-        width='100%' 
-        marginTop='auto' >
-    
-        <form onSubmit={handleMessageSend} >
-          <FormControl sx={{width:'100%'}} variant="standard"   >
-            <OutlinedInput  sx={{height:45,  }} inputRef={messageInputRef} placeholder='message' endAdornment={
-              <IconButton type='submit'>
-                <SendSharp/>
-              </IconButton>
-            } />
-          </FormControl>
-        </form>
-        
-      </Box>
-     
-    </Box>
-  )
+    </>
+    )
 }

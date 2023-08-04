@@ -30,7 +30,7 @@ export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,rec
         </Box>
         
         <Box ml={1} mt={1}>
-          <Typography variant='body1' lineHeight={.9} fontSize={19}>{recipient.id}</Typography>
+          <Typography variant='body1' lineHeight={.9} fontSize={19}>{recipient.name}</Typography>
           <Typography variant='caption' color='primary.light'>Online</Typography>
         </Box>            
 

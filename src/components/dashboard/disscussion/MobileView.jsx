@@ -4,53 +4,38 @@ import TopbarDiscussion from './TopbarDiscussion';
 
 import { SendSharp  } from '@mui/icons-material'
 
-import {Slide , Box ,  FormControl , OutlinedInput , IconButton } from '@mui/material'
+import {Slide , Box ,  FormControl , OutlinedInput , IconButton, Typography , Button , Paper} from '@mui/material'
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import BlockIcon from '@mui/icons-material/Block';
+
+
 import { useAuth } from '../../../providers/AuthProvider'
 import { useDiscussions } from '../../../providers/DiscussionsProvider'
-import Discussions from '../sidebar/Discussions/Discussions';
 import { useUser } from '../../../providers/UserProvider';
 
-export default function OpenDiscussion() {
-  const {userData , id} = useUser()
-  const {addMessageToDiscussion, discussions , activeDiscussion} = useDiscussions()
+export default function MobileView({  messageInputRef , handleMessageSend , id ,contact , messages , activeDiscussion}) {
 
-  const [showDiscussion , setShowDiscussion] = useState(true)
-
-  useEffect(()=>{
-    console.log(activeDiscussion)
-    setShowDiscussion(true)
-  },[discussions])
+  const {showDiscussion , setShowDiscussion} =useDiscussions()
 
   const setRef = useCallback((element)=>{
     if(element) element.scrollIntoView({smooth:true})
   },[])
-
-  const messageInputRef = useRef(null)
-
-  if(!activeDiscussion) return
-
-  function handleMessageSend(e){
-    e.preventDefault()    
-    let messageContent = messageInputRef.current.value
-    if(messageContent == '') return
-    addMessageToDiscussion(activeDiscussion.discussionId , activeDiscussion.recipient ,  {senderId:id,senderName:userData.displayName , content:messageContent })
-    messageInputRef.current.value = ''
-  }
   
-  const messages = activeDiscussion.messages
+
+
 
   return (
     <Slide sx={{position:'fixed' , top:0 , right:0,width:'100%'}} direction='left' in={showDiscussion} unmountOnExit mountOnEnter>
 
         <Box 
+          position='relative'
           height='98vh' 
           padding={2} 
-
           backgroundColor='primary.dark'
           boxShadow='-.2px 0 0 grey' 
           display='flex' 
           flexDirection='column'  
-          position='relative'>
+          >
         
         <TopbarDiscussion showDiscussion={showDiscussion} onShowDiscussion={setShowDiscussion} recipient={activeDiscussion.recipient}/>
         
@@ -61,14 +46,37 @@ export default function OpenDiscussion() {
                 return  <Message key={index} messageRef={lastRef ? setRef : null}  userId={id} senderId={msg.senderId} senderName={msg.senderName} content={msg.content}/>
             })
             }
+        
         </Box>
+
+
 
         <Box
             backgroundColor='primary.dark'  
             padding={1.5} 
             width='100%' 
-            marginTop='auto' >
-        
+            marginTop='auto' 
+        >
+             {/* Message to show if id does not exist in contacts */
+                !contact  ?
+                <Box   mb={2} width='100%'>
+                    <Paper  sx={{ display:'flex' , alignItems:'center',flexDirection:'column' ,mx:'auto',maxWidth:300 , p:2}}>
+                        <Typography mb={2} variant='body1' textAlign='center' fontSize={14} color='grey'>This ID does not exist in your contacts</Typography>
+                        <Box display='flex' flexDirection='column' alignItems='center'>
+                            <Button startIcon={<BlockIcon/>} sx={{mr:2}}>
+                                <Typography variant='button' color='success'>Block</Typography>
+                            </Button>
+                            <Button startIcon={<PersonAddIcon/>} color='success'>
+                                <Typography variant='button' >Add to Contacts</Typography>               
+                            </Button>
+                        </Box>
+                        
+                    </Paper>
+                </Box>
+                : null    
+            /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
+            }
+
             <form onSubmit={handleMessageSend}>
               <FormControl sx={{width:'100%'}} variant="standard"   >
                   <OutlinedInput  sx={{height:45}} inputRef={messageInputRef} placeholder='message' endAdornment={
