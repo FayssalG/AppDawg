@@ -4,8 +4,13 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ArrowBack } from '@mui/icons-material'
 
 import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography} from '@mui/material'
+import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
 export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,recipient}) {
+
+  const {connectedUsers} = useOtherUsers()
+  const isConnected = connectedUsers.includes(recipient.id) ? true : false
+
   return (
     <AppBar 
       
@@ -31,7 +36,7 @@ export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,rec
         
         <Box ml={1} mt={1}>
           <Typography variant='body1' lineHeight={.9} fontSize={19}>{recipient.name}</Typography>
-          <Typography variant='caption' color='primary.light'>Online</Typography>
+          <Typography variant='caption' color='primary.light'>{isConnected ? 'Online' : 'Offline'}</Typography>
         </Box>            
 
         <Box ml='auto' >

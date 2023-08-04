@@ -12,13 +12,14 @@ import { Box ,  FormControl , OutlinedInput , IconButton  , useMediaQuery , useT
 import DesktopView from './DesktopView';
 import MobileView from './MobileView';
 import AddToContactsDialog from './AddToContactsDialog'
+import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
 export default function OpenDiscussion() {
   const theme= useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'))
   
   const {userData , id } = useUser()
-  const {addMessageToDiscussion , discussions,activeDiscussion , checkRecipientState}  = useDiscussions()
+  const {addMessageToDiscussion ,activeDiscussion }  = useDiscussions()
   const {contacts , addContact} = useContacts()
   
   const messageInputRef = useRef(null)

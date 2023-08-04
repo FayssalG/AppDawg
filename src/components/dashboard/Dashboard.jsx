@@ -14,6 +14,8 @@ import OpenDiscussion from './disscussion/OpenDiscussion'
 import DiscussionsProvider from '../../providers/DiscussionsProvider'
 import ContactsProvider from '../../providers/ContactsProvider'
 import SocketProvider from '../../providers/SocketProvider'
+import OtherUsersProvider from '../../providers/OtherUsersProvider'
+
 import { useUser } from '../../providers/UserProvider'
 
 
@@ -35,24 +37,25 @@ export default function Dashboard() {
 
 
     return (     
-      <SocketProvider id={id}>   
-        <ContactsProvider>
-      
-          <DiscussionsProvider>
-           
-            <Grid container spacing={2}  overflow='hidden' backgroundColor='primary.dark' padding={2}  >
-              <Grid item xs={12} md={3.7}  >
-                <Sidebar id={id} signOut={signOut} userData={userData}/>      
-              
-              </Grid>
-              
-              <Grid item  xs={0} md={8.3} sx={{ backgroundImage:`url('${background}')` , backgroundRepeat:'no-repeat',backgroundSize:'cover', backgroundPosition:'center'}}>
-                  <OpenDiscussion /> 
-              </Grid>
-            </Grid>
+      <SocketProvider id={id}>
+          <ContactsProvider>      
+            <DiscussionsProvider>
+              <OtherUsersProvider>   
 
-          </DiscussionsProvider>
-        </ContactsProvider>
+              <Grid container spacing={2}  overflow='hidden' backgroundColor='primary.dark' padding={2}  >
+                <Grid item xs={12} md={3.7}  >
+                  <Sidebar id={id} signOut={signOut} userData={userData}/>      
+                
+                </Grid>
+                
+                <Grid item  xs={0} md={8.3} sx={{ backgroundImage:`url('${background}')` , backgroundRepeat:'no-repeat',backgroundSize:'cover', backgroundPosition:'center'}}>
+                    <OpenDiscussion /> 
+                </Grid>
+              </Grid>
+              
+              </OtherUsersProvider>
+            </DiscussionsProvider>
+          </ContactsProvider>
       </SocketProvider>
     )
 }
