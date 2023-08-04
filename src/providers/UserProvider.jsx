@@ -11,6 +11,7 @@ import {ref as storeRef  } from 'firebase/storage'
  
 import {db} from '../config/firebase'
 import { Navigate } from 'react-router-dom'
+import { useSocket } from './SocketProvider'
 
 const UserContext = createContext()
 
@@ -81,11 +82,9 @@ export default function UserProvider({children}) {
   }
 
 
-
-  
   
   return (
-    <UserContext.Provider value={{id , user ,dispatch  , userData , updateDisplayName , updatePhotoURL , updateInfos}}>
+    <UserContext.Provider value={{id , user ,dispatch  , userData , updateDisplayName , updatePhotoURL , updateInfos }}>
         {children}
     </UserContext.Provider>
     )

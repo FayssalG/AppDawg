@@ -11,24 +11,41 @@ import { SendSharp  } from '@mui/icons-material'
 import { Box ,  FormControl , OutlinedInput , IconButton  , useMediaQuery , useTheme} from '@mui/material'
 import DesktopView from './DesktopView';
 import MobileView from './MobileView';
+import AddToContactsDialog from './AddToContactsDialog'
 
 export default function OpenDiscussion() {
   const theme= useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'))
   
-  const {userData , id} = useUser()
-  const {addMessageToDiscussion , discussions,activeDiscussion} = useDiscussions()
+  const {userData , id } = useUser()
+  const {addMessageToDiscussion , discussions,activeDiscussion , checkRecipientState}  = useDiscussions()
   const {contacts , addContact} = useContacts()
+  
   const messageInputRef = useRef(null)
 
   const setRef = useCallback((element)=>{
     if(element) element.scrollIntoView({smooth:true})
   },[])
 
+  //function handling adding a contact to constacts if it does not exist
+  const [openDialog , setOpenDialog] = useState(false)  
+  function handleCloseDialog(){
+    setOpenDialog(false)
+  }
+  function handkeOpenDialog(){
+    setOpenDialog(true)
+    console.log(openDialog)
+  }
+  function handleAddContactIfNotExist(contactId , newName){
+    setOpenDialog(false)
+    addContact(contactId , newName)
+  }
+  /////////////////
 
   if(!activeDiscussion) return
 
-
+  //Checking if user is online or not
+  //////////////////////
 
   function handleMessageSend(e){
     e.preventDefault()    
@@ -36,12 +53,16 @@ export default function OpenDiscussion() {
     if(messageContent == '') return
     addMessageToDiscussion(activeDiscussion.discussionId ,  activeDiscussion.recipient ,  {senderId:id,senderName:userData.displayName , content:messageContent })
     messageInputRef.current.value = ''
-  }
-  
+  }  
+
+
+
   const messages = activeDiscussion.messages
   const contact = contacts.find((contact)=>{
     return contact.id == activeDiscussion.recipient.id
   })
+
+  
 
   return (
     <>
@@ -53,6 +74,9 @@ export default function OpenDiscussion() {
                 activeDiscussion={activeDiscussion}  
                 messages={messages}
                 contact={contact}
+
+                handleOpenDialog={handkeOpenDialog}
+
                 />
           :
             <MobileView
@@ -62,9 +86,12 @@ export default function OpenDiscussion() {
                 activeDiscussion={activeDiscussion}  
                 messages={messages}
                 contact={contact}
+
+                handkeOpenDialog={handkeOpenDialog}
             />
       }
-
+      
+      <AddToContactsDialog open={openDialog} onClose={handleCloseDialog} contactId={activeDiscussion.recipient.id} onAddContact={handleAddContactIfNotExist}/>  
     </>
     )
 }

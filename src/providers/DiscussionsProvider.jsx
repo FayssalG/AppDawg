@@ -11,7 +11,6 @@ export function useDiscussions(){
 }
 
 
-
 export default function DiscussionsProvider({children}) {
     const {id} = useUser()
     const {contacts} = useContacts()   
@@ -102,14 +101,19 @@ export default function DiscussionsProvider({children}) {
         }) 
     }
 
+  
+
     const filteredDiscussions= useMemo(()=>{
         let newDiscussions = [...discussions]
         newDiscussions.forEach((discussion)=>{
             let exisitingContact = contacts.find((contact)=>contact.id === discussion.recipient.id)
             if(exisitingContact) discussion.recipient.name = exisitingContact.name 
+            else discussion.recipient.name = discussion.recipient.id 
+            
         })
         return newDiscussions
     },[discussions , contacts])
+
 
     useEffect(()=>{
         if(socket == null) return
@@ -123,8 +127,8 @@ export default function DiscussionsProvider({children}) {
     },[socket  , addRetrievedDiscussion , addRecievedMessageToDiscussion])
 
 
-
-
+    
+    /////////////////////////
 
     const [showDiscussion , setShowDiscussion] = useState(false)  
     /*

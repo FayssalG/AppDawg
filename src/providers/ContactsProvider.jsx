@@ -13,8 +13,26 @@ export default function ContactsProvider({children}) {
             return [...prev , {id:contactId , name:contactName}]
         })
     }
+
+    function deleteContact(contactId){
+        setContacts((prev)=>{
+            return prev.filter((contact)=>{
+                contact.id != contactId
+            })
+        })
+    }
+     
+    function renameContact(contactId , newName){
+        let newContacts = [...contacts]
+        newContacts.forEach((contact)=>{
+            if(contact.id == contactId){
+                contact.name = newName
+            }
+        })
+        setContacts(newContacts)
+    }
     return (
-    <ContactsContext.Provider value={{contacts , addContact}}>
+    <ContactsContext.Provider value={{contacts , addContact , deleteContact , renameContact}}>
         {children}
     </ContactsContext.Provider>
   )

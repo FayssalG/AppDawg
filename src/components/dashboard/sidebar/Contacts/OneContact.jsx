@@ -1,24 +1,96 @@
 
-import React , {useState} from 'react'
+import React , {useState , useRef, useReducer} from 'react'
+import {Avatar, Divider , ListItem , ListItemAvatar , ListItemText, Typography , Box , Popper ,MenuList , MenuItem , ClickAwayListener ,  IconButton , Paper , Grow , Slide} from '@mui/material'
+import { Button , Dialog , DialogActions, DialogContent , TextField, DialogTitle , DialogContentText} from '@mui/material'
+import  ExpandMoreIcon  from '@mui/icons-material/ExpandMore'
 
-import {Avatar, Divider , ListItem , ListItemAvatar , ListItemText, Typography , Box} from '@mui/material'
+
 import { useDiscussions } from '../../../../providers/DiscussionsProvider'
+import { useContacts } from '../../../../providers/ContactsProvider'
+import RenameContactDialog from './RenameContactDialog'
+import DeleteContactDialog from './DeleteContactDialog'
+
+
+
+function dialogReducer(state , action ){
+    switch(action.type){
+        case 'add' : 
+            return {...state , addDialog : action.payload}
+            break;
+        case 'rename' : 
+            return {...state , renameDialog : action.payload}
+            break;
+        case 'delete' : 
+            return {...state , deleteDialog : action.payload}
+            break;
+        default:
+            return {...state}
+    }
+}
 
 export default function OneContact({onShowContacts , contactDetails }) {
     const {name, id , photoURL} = contactDetails 
     const {openNewDiscussion } = useDiscussions()
-   
+    const {deleteContact , renameContact} = useContacts()
+
     function handleOpenDiscussion(){
         openNewDiscussion({id:id , name:name } )
         onShowContacts(false)
     }
 
-    const [hover , setHover] = useState(false)
 
+    //contact  logic management (delete  , rename  ... )
+        //hover and drop menu logic
+            const [hover , setHover] = useState(false)
 
-    return (
+            const [open , setOpen] = useState(false)
+            const anchorRef = useRef(null)
+            function handleToggle(e){
+                e.stopPropagation()
+                setOpen((prev)=>!prev)
+            }
+            function handleClose(e){
+                if (anchorRef.current && anchorRef.current.contains(e.target)) {
+                return;
+                }
+                setOpen(false)
+            }
+        ////////////////////////////////
+
+    const [openDialog , dispatch] = useReducer(dialogReducer , {deleteDialog:false , renameDialog:false, addDialog:false})
+    console.log(openDialog)
+
+    function handleOpenRenameDialog(){
+        dispatch({type:'rename' , payload : true})
+    }
+    function handleCloseRenameDialog(){
+        dispatch({type:'rename' , payload : false})
+    }
+
+    function handleOpenDeleteDialog(){
+        dispatch({type:'delete' , payload : true})
+    }
+    function handleCloseDeleteDialog(){
+        dispatch({type:'delete' , payload : false})
+    }
+    ///////////////////////////
+
+return (
+<>
+
     <Box sx={{borderRadius:'10px',cursor:'pointer'}} backgroundColor={hover ? '#2A3942' : ''}  onClick={handleOpenDiscussion} onMouseLeave={()=>setHover(false)} onMouseEnter={()=>setHover(true)} >
-        <ListItem sx={{px:1 , height:'80px'}}>
+        <ListItem 
+            sx={{px:1 , height:'80px' , overflow:'hidden'}}
+            secondaryAction={
+                <Box ref={anchorRef} >
+                    <Slide direction='left'  in={hover}>
+                        <IconButton  onClick={handleToggle} >
+                            <ExpandMoreIcon/>
+                        </IconButton>
+                    </Slide> 
+                </Box>      
+            }
+        >
             <ListItemAvatar >
                 <Avatar sx={{mr:2,width:50 , height:50 }}  />
             </ListItemAvatar>
@@ -34,5 +106,28 @@ export default function OneContact({onShowContacts , contactDetails }) {
             </ListItemText>
         </ListItem>
     </Box>
+
+    {/* Drop menu */}
+        <Popper sx={{zIndex:2}} open={open} anchorOrigin={{vertical:'bottom' , horizontal:'right'}}  anchorEl={anchorRef.current}>
+            <Grow in={open}>
+            <Paper>
+                <ClickAwayListener onClickAway={handleClose}>
+                    <MenuList sx={{width:140 , py:0}} >
+                        <MenuItem onClick={handleOpenRenameDialog}>Rename</MenuItem>
+                        <MenuItem onClick={handleOpenDeleteDialog}>Delete</MenuItem>
+                    </MenuList>
+                </ClickAwayListener>
+            </Paper>
+            </Grow>
+        </Popper>
+    {/*  */}
+
+    {/* Delete dialog */}
+        <DeleteContactDialog open={openDialog.deleteDialog} onClose={handleCloseDeleteDialog} contactDetails={contactDetails}/>
+    {/*  */}
+    {/* Rename dialog */}
+        <RenameContactDialog  open={openDialog.renameDialog} onClose={handleCloseRenameDialog} contactDetails={contactDetails}/>
+    {/*  */}
+</>
   )
 }

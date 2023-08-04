@@ -13,7 +13,7 @@ import { useAuth } from '../../../providers/AuthProvider'
 import { useDiscussions } from '../../../providers/DiscussionsProvider'
 import { useUser } from '../../../providers/UserProvider';
 
-export default function MobileView({  messageInputRef , handleMessageSend , id ,contact , messages , activeDiscussion}) {
+export default function MobileView({  messageInputRef , handleMessageSend , id ,contact , messages , activeDiscussion , handleOpenDialog}) {
 
   const {showDiscussion , setShowDiscussion} =useDiscussions()
 
@@ -66,7 +66,7 @@ export default function MobileView({  messageInputRef , handleMessageSend , id ,
                             <Button startIcon={<BlockIcon/>} sx={{mr:2}}>
                                 <Typography variant='button' color='success'>Block</Typography>
                             </Button>
-                            <Button startIcon={<PersonAddIcon/>} color='success'>
+                            <Button onClick={handleOpenDialog} startIcon={<PersonAddIcon/>} color='success'>
                                 <Typography variant='button' >Add to Contacts</Typography>               
                             </Button>
                         </Box>
