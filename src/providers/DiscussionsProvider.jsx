@@ -111,9 +111,9 @@ export default function DiscussionsProvider({children}) {
         const q = query(discussionsRef , where('recipients' , 'array-contains' , id)) 
         const snapshot = await getDocs(q)
         let data = []
+        let newDiscussions = []
     
         snapshot.forEach((doc)=>{
-             let newDiscussions = []
              if(doc.data()){
                 
                 doc.data().recipients.forEach((recipient)=>{
@@ -122,9 +122,9 @@ export default function DiscussionsProvider({children}) {
                     }
                  })
              }
-             setDiscussions(newDiscussions)
         })
-       
+        setDiscussions(newDiscussions)
+
      },[])
      
     
@@ -144,7 +144,7 @@ export default function DiscussionsProvider({children}) {
             }
             else{
                 const discussionsRef = doc(db , 'discussions' , discussionId) 
-                console.log('No Data')
+
                 setDoc(discussionsRef , {
                     discussionId : discussionId,
                     recipients : [userId , recipient.id],
