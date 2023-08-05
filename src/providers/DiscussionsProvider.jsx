@@ -1,4 +1,7 @@
 import React , {useContext ,useState, createContext, useEffect , useCallback , useMemo} from 'react'
+import {   query , getDoc, getDocs, updateDoc , doc ,setDoc , addDoc , collection , where} from 'firebase/firestore'
+import { firestoreDb as db} from '../config/firebase'
+
 import useLocalStorage from '../hooks/useLocalStorage'
 import { useSocket } from './SocketProvider'
 import {useUser} from './UserProvider'
@@ -50,7 +53,6 @@ export default function DiscussionsProvider({children}) {
     }
 
 
-
     function addMessageToDiscussion(discussionId , recipient , message){
         socket.emit('send-message' , {discussionId , recipient , message})
         const newDiscussions = [...discussions]
@@ -59,15 +61,13 @@ export default function DiscussionsProvider({children}) {
                     discussion.messages.push(message)
                 }
             })
+            
         setDiscussions(newDiscussions)
+        console.log(discussions)
+
+        updateDiscussionInDb(userId , recipient , message ,discussionId)
     }
 
-
-    
-    const addRetrievedDiscussion = useCallback(({discussionId , recipient , messages})=>{
-        setDiscussions((prev)=>[...prev , {discussionId :discussionId , recipient:recipient , messages:[...messages] , isActive:false}])
-    
-    },[discussions])
 
     const addRecievedMessageToDiscussion = useCallback( ({discussionId , recipient , message})=>{
         const isDiscussionExist = findDiscussionByRecipient(recipient) 
@@ -86,7 +86,67 @@ export default function DiscussionsProvider({children}) {
         else{        
             setDiscussions((prev)=>[...prev , {discussionId :discussionId , recipient:recipient , messages:[message] , isActive:false}])
         }
+
     },[discussions])
+
+
+
+    const  getUserDiscussions = useCallback(async (id )=>{
+        const discussionsRef = collection(db , 'discussions')
+        const q = query(discussionsRef , where('recipients' , 'array-contains' , id)) 
+        const snapshot = await getDocs(q)
+        let data = []
+    
+        snapshot.forEach((doc)=>{
+             let newDiscussions = []
+             if(doc.data()){
+                
+                doc.data().recipients.forEach((recipient)=>{
+                    if(recipient !== id){
+                        newDiscussions.push( {discussionId :doc.data().discussionId, recipient :{id:recipient , name:recipient ,isActive:false} , messages:doc.data().messages } )
+                    }
+                 })
+             }
+             setDiscussions(newDiscussions)
+        })
+       
+     },[])
+     
+    
+    function updateDiscussionInDb( userId , recipient , message , discussionId){
+        async function getDiscussion(discussionId){
+            const  docSnap = await getDoc( doc(db ,'discussions' , discussionId ))
+            let data = docSnap.data() 
+            
+            return data
+        }
+        getDiscussion(discussionId)
+        .then((data)=>{
+            
+            if(data){
+                const docRef = doc(db , 'discussions' , discussionId)
+                updateDoc(docRef ,{messages : [...data.messages , message]})
+            }
+            else{
+                const discussionsRef = doc(db , 'discussions' , discussionId) 
+                console.log('No Data')
+                setDoc(discussionsRef , {
+                    discussionId : discussionId,
+                    recipients : [userId , recipient.id],
+                    messages : [message]
+                    
+                })
+            }
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    
+    }
+    
+    function updateUsersStatus(){
+        //here we update the discussions state
+    }
 
 
     function findActiveDiscussion(){
@@ -101,7 +161,25 @@ export default function DiscussionsProvider({children}) {
         }) 
     }
 
-  
+
+    
+    useEffect(()=>{
+        getUserDiscussions(userId)
+
+    },[])
+
+    useEffect(()=>{
+        if(socket == null) return
+        socket.on('recieve-message' , addRecievedMessageToDiscussion)
+        return ()=>{
+            socket.off('recieve-message')
+            socket.off('retrieve-discussion')
+        }
+    },[socket   , addRecievedMessageToDiscussion])
+
+
+    
+
 
     const filteredDiscussions= useMemo(()=>{
         let newDiscussions = [...discussions]
@@ -115,26 +193,14 @@ export default function DiscussionsProvider({children}) {
     },[discussions , contacts])
 
 
-    useEffect(()=>{
-        if(socket == null) return
-        socket.on('retrieve-discussion' , addRetrievedDiscussion)
-        socket.on('recieve-message' , addRecievedMessageToDiscussion)
-        
-        return ()=>{
-            socket.off('recieve-message')
-            socket.off('retrieve-discussion')
-        }
-    },[socket  , addRetrievedDiscussion , addRecievedMessageToDiscussion])
-
-
-    
     /////////////////////////
 
-    const [showDiscussion , setShowDiscussion] = useState(false)  
     /*
         Used only in MobileView component to 
         handle discussion visisbility on the screen
     */
+    const [showDiscussion , setShowDiscussion] = useState(false)  
+
     const value = {
         showDiscussion,setShowDiscussion,
         discussions, 
