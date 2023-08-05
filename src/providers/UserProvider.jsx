@@ -4,11 +4,13 @@ import React, {createContext, useContext , useEffect, useReducer, useState} from
 import { useAuth } from './AuthProvider'
 import useChatId from '../hooks/useChatId'
 
-
+import { getDoc , doc , setDoc , updateDoc  } from 'firebase/firestore'
 import {get , set, ref , child } from 'firebase/database'
 import {getDownloadURL,uploadBytes  , getStorage} from 'firebase/storage'
+
 import {ref as storeRef  } from 'firebase/storage'
  
+import  {firestoreDb} from '../config/firebase'
 import {db} from '../config/firebase'
 import { Navigate } from 'react-router-dom'
 import { useSocket } from './SocketProvider'
@@ -44,15 +46,14 @@ export default function UserProvider({children}) {
 
   useEffect(()=>{
     async function getUserData(){
-      let data 
-      const dbRef = ref(db)
-      const snapshot = await get(child(dbRef , 'users/'+user.uid))
-    
-      if(snapshot.exists()){
-        console.log(snapshot.val())
-        dispatch({type:'all' , payload:snapshot.val()}) 
+      const docSnap = await getDoc(doc(firestoreDb , 'users' , user.uid))
+      if( docSnap.data()){
+        dispatch({type:'all' , payload:docSnap.data()})
       }else{
-        console.log('No data')
+        let newData = {chatId: id , displayName : user.displayName , photoURL:'' , infos:'Hi I m new to AppDawg'}
+        setDoc(doc(firestoreDb , 'users' , user.uid) , newData)
+        dispatch({type:'all' , payload:newData})
+      
       }
     }
     getUserData()
@@ -60,17 +61,20 @@ export default function UserProvider({children}) {
 
   function updateDisplayName(newName ){
     if(newName == null) return
-    set(ref(db , 'users/'+user.uid+'/displayName') , newName ? newName : user.displayName)
+    //set(ref(db , 'users/'+user.uid+'/displayName') , newName ? newName : user.displayName)
+    updateDoc(doc(firestoreDb , 'users' , user.uid) , {displayName : newName})
   }
 
   async function updatePhotoURL(file){
     const link = await upload(file)
-    set(ref(db , 'users/'+user.uid+'/photoURL') , link)
+  //   set(ref(db , 'users/'+user.uid+'/photoURL') , link)
+    updateDoc(doc(firestoreDb , 'users' , user.uid) , {photoURL : link})
   }
 
   function updateInfos(newInfos){
     if(!newInfos) return
-    set(ref(db , 'users/'+user.uid+'/infos') , newInfos)
+    //set(ref(db , 'users/'+user.uid+'/infos') , newInfos)
+    updateDoc(doc(firestoreDb , 'users' , user.uid) , {infos : newInfos})
   }
 
   async function upload(file ){

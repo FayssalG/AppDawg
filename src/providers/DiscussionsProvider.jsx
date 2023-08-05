@@ -18,10 +18,24 @@ export default function DiscussionsProvider({children}) {
     const {id} = useUser()
     const {contacts} = useContacts()   
     const userId = id
-
     const [discussions , setDiscussions] = useState([])   
-
     const socket = useSocket()
+
+    // helper functions
+    function findActiveDiscussion(){
+        return discussions.find((discussion)=>{
+            return discussion.isActive == true
+        })
+    }
+
+    function findDiscussionByRecipient(recipient){
+        return discussions.find((d)=> {
+            return d.recipient.id == recipient.id
+        }) 
+    }
+
+    ///////////////
+
 
     function openNewDiscussion(recipient){
         let isDiscussionExist = findDiscussionByRecipient(recipient)
@@ -103,7 +117,7 @@ export default function DiscussionsProvider({children}) {
                 
                 doc.data().recipients.forEach((recipient)=>{
                     if(recipient !== id){
-                        newDiscussions.push( {discussionId :doc.data().discussionId, recipient :{id:recipient , name:recipient ,isActive:false} , messages:doc.data().messages } )
+                        newDiscussions.push( {discussionId :doc.data().discussionId, recipient :{id:recipient , name:recipient } , isActive:false , messages:doc.data().messages } )
                     }
                  })
              }
@@ -144,30 +158,14 @@ export default function DiscussionsProvider({children}) {
     
     }
     
-    function updateUsersStatus(){
-        //here we update the discussions state
-    }
-
-
-    function findActiveDiscussion(){
-        return discussions.find((discussion)=>{
-            return discussion.isActive == true
-        })
-    }
-
-    function findDiscussionByRecipient(recipient){
-        return discussions.find((d)=> {
-            return d.recipient.id == recipient.id
-        }) 
-    }
-
-
     
+
+   
     useEffect(()=>{
         getUserDiscussions(userId)
-
     },[])
 
+     
     useEffect(()=>{
         if(socket == null) return
         socket.on('recieve-message' , addRecievedMessageToDiscussion)
