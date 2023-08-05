@@ -8,6 +8,7 @@ export function useContacts(){
 export default function ContactsProvider({children}) {
     const [contacts , setContacts] = useLocalStorage('contacts' , [])
     
+    
     function addContact(contactId , contactName){
         setContacts((prev)=>{
             return [...prev , {id:contactId , name:contactName}]
@@ -17,7 +18,7 @@ export default function ContactsProvider({children}) {
     function deleteContact(contactId){
         setContacts((prev)=>{
             return prev.filter((contact)=>{
-                contact.id != contactId
+                return contact.id != contactId
             })
         })
     }

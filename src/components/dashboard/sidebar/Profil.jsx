@@ -45,7 +45,7 @@ export default function Profil({  onShowProfil , showProfil }) {
     <Slide direction='right' in={showProfil} mountOnEnter unmountOnExit>
         <Box 
           backgroundColor='primary.dark' 
-          sx={{position:'absolute',zIndex:2,height:'100%', width:'100%', left:0,top:0 ,display:'flex' , flexDirection : 'column' , alignItems: 'center' }}>
+          sx={{position:'absolute',zIndex:2, width:'100%', left:0,top:0  }}>
 
             <AppBar sx={{borderRadius:'10px', backgroundColor:'topbar.main'}} position='static' >
               <Box sx={{display:'flex' ,gap:4 , p:'4rem 0 1rem 1rem', alignItems:'center'}}>
@@ -56,70 +56,73 @@ export default function Profil({  onShowProfil , showProfil }) {
               </Box>
             </AppBar>
 
-            <IconButton sx={{ mt:2}} component='label' >
-              <Badge 
-                anchorOrigin={{vertical : 'bottom' , horizontal:'right'}}
-                overlap='circular' 
-              >
-                <input ref={photoRef} onChange={handleUpdatePhoto}  hidden type='file'></input>
-              
-                <Avatar src={photoURL} sx={{width:170  , height:170 }} />
-              </Badge>
-            </IconButton>
+            
+            <Box sx={{overflow:'auto' ,maxHeight:'500px',display:'flex' , flexDirection : 'column' , alignItems: 'center' }}>
+                <IconButton sx={{ mt:2}} component='label' >
+                  <Badge 
+                    anchorOrigin={{vertical : 'bottom' , horizontal:'right'}}
+                    overlap='circular' 
+                  >
+                    <input ref={photoRef} onChange={handleUpdatePhoto}  hidden type='file'></input>
+                  
+                    <Avatar src={photoURL} sx={{width:170  , height:170 }} />
+                  </Badge>
+                </IconButton>
 
-              <Box sx={{p:4  }}  display='flex' gap={5} flexDirection='column'>
-                <Box>
-                  <Typography marginBottom={2} variant='body1' fontSize={14} color='primary' >Your Name</Typography>
-                  
-                  {
-                    showNameInput ?
-                    <FormControl sx={{width:'100%'}}>
-                      <Input defaultValue={displayName} inputRef={displayNameRef} endAdornment={
-                        <IconButton onClick={handleUpdateDisplayName}>
-                          <DoneIcon/>
-                        </IconButton>
-                      }>
-                      </Input>
-                    </FormControl>
-                    :
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Typography sx={{flexGrow:1}}>{displayName}</Typography>
-                      <IconButton onClick={()=>setShowNameInput(true)} sx={{justifySelf:'end'}}>
-                        <EditSharpIcon/>
-                      </IconButton>
-                    </Box> 
-                  }
-                  
-                  <Typography  sx={{mt:2}} variant='body2' color='grey'  size={0.2} >Ce n'est pas votre nom d'utilisateur·ice ni votre code PIN. Ce nom sera visible par vos contacts WhatsApp.</Typography> 
-                </Box>
-
-                <Box>
-                  <Typography marginBottom={2} variant='body1' fontSize={14} color='primary' >Infos</Typography>
-                  
-                  {
-                    showInfosInput ?
-                      <FormControl sx={{width:'100%'}}>
-                        <Input defaultValue={infos} inputRef={infosRef} endAdornment={
-                          <IconButton onClick={handleUpdateInfos}>
-                            <DoneIcon/>
+                  <Box padding={4}    display='flex' gap={5} flexDirection='column'>
+                    <Box>
+                      <Typography marginBottom={2} variant='body1' fontSize={14} color='primary' >Your Name</Typography>
+                      
+                      {
+                        showNameInput ?
+                        <FormControl sx={{width:'100%'}}>
+                          <Input defaultValue={displayName} inputRef={displayNameRef} endAdornment={
+                            <IconButton onClick={handleUpdateDisplayName}>
+                              <DoneIcon/>
+                            </IconButton>
+                          }>
+                          </Input>
+                        </FormControl>
+                        :
+                        <Box display='flex' justifyContent='space-between' alignItems='center'>
+                          <Typography sx={{flexGrow:1}}>{displayName}</Typography>
+                          <IconButton onClick={()=>setShowNameInput(true)} sx={{justifySelf:'end'}}>
+                            <EditSharpIcon/>
                           </IconButton>
-                        }>
-                        </Input>
-                     </FormControl>       
-                 
-                    :
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Typography sx={{flexGrow:1}}>{infos}</Typography>
-                      <IconButton onClick={()=>setShowInfosInput(true)} >
-                        <EditSharpIcon/>
-                      </IconButton>
-                    </Box> 
-                  }
-               
-                </Box>
-              </Box>
-        </Box>
+                        </Box> 
+                      }
+                      
+                      <Typography  sx={{mt:2}} variant='body2' color='grey'  size={0.2} >Ce n'est pas votre nom d'utilisateur·ice ni votre code PIN. Ce nom sera visible par vos contacts WhatsApp.</Typography> 
+                    </Box>
 
+                    <Box>
+                      <Typography marginBottom={2} variant='body1' fontSize={14} color='primary' >Infos</Typography>
+                      
+                      {
+                        showInfosInput ?
+                          <FormControl sx={{width:'100%'}}>
+                            <Input defaultValue={infos} inputRef={infosRef} endAdornment={
+                              <IconButton onClick={handleUpdateInfos}>
+                                <DoneIcon/>
+                              </IconButton>
+                            }>
+                            </Input>
+                        </FormControl>       
+                    
+                        :
+                        <Box display='flex' justifyContent='space-between' alignItems='center'>
+                          <Typography sx={{flexGrow:1}}>{infos}</Typography>
+                          <IconButton onClick={()=>setShowInfosInput(true)} >
+                            <EditSharpIcon/>
+                          </IconButton>
+                        </Box> 
+                      }
+                  
+                    </Box>
+                  </Box>
+              </Box>
+        
+        </Box>
     </Slide>
       )
 }

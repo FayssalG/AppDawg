@@ -10,22 +10,32 @@ export function useOtherUsers(){
 
 export default function OtherUsersProvider({children}) {
     const socket = useSocket()
-    const {activeDiscussion , discussions} = useDiscussions()
-    const [connectedUsers , setConnectedUsers] = useState([])
-
+    const [connectedRecipients , setConnectedRecipients] = useState([])
+    console.log(connectedRecipients)
+    
     useEffect(()=>{
         if(!socket) return
-        const usersToCheck = discussions.map((discussion)=>discussion.recipient.id)
-        socket.emit('check-user-state' , usersToCheck)
-        socket.on('user-state' , (data)=>{
-            setConnectedUsers([...data])
-        })
-        
-    },[socket ,activeDiscussion , discussions])
+        socket.on('users-status' , getConnectedRecipients)
+        socket.on('user-connected' , addConnectedRecipient)
+        socket.on('user-disconnected' , removeDisconnectedRecipient)
+    },[socket])
 
+    function getConnectedRecipients(connectedList){
+        //let generateArray = Array.from(new Array(100000), (val , index)=>'test'+index)
+        setConnectedRecipients([...connectedList])
+    }
+
+    function addConnectedRecipient(recipientId){
+        setConnectedRecipients((prev)=>[...prev , recipientId])
+    }
+
+    function removeDisconnectedRecipient(recipientId){
+        setConnectedRecipients((prev)=>prev.filter((id)=>id != recipientId))
+       
+    }
     
   return (
-    <OtherUsersContext.Provider value={{connectedUsers}}>
+    <OtherUsersContext.Provider value={{connectedRecipients}}>
         {children}
     </OtherUsersContext.Provider>
   )

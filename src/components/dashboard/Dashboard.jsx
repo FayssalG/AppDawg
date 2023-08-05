@@ -38,9 +38,10 @@ export default function Dashboard() {
 
     return (     
       <SocketProvider id={id}>
+        <OtherUsersProvider>   
+
           <ContactsProvider>      
             <DiscussionsProvider>
-              <OtherUsersProvider>   
 
               <Grid container spacing={2}  overflow='hidden' backgroundColor='primary.dark' padding={2}  >
                 <Grid item xs={12} md={3.7}  >
@@ -53,9 +54,9 @@ export default function Dashboard() {
                 </Grid>
               </Grid>
               
-              </OtherUsersProvider>
             </DiscussionsProvider>
           </ContactsProvider>
+        </OtherUsersProvider>
       </SocketProvider>
     )
 }
