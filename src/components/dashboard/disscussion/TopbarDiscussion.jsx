@@ -8,7 +8,8 @@ import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
 export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,recipient}) {
 
- 
+  const {connectedUsers} = useOtherUsers()
+  const connectionStatus = connectedUsers[recipient.id] ? connectedUsers[recipient.id] :'offline'
 
   return (
     <AppBar 
@@ -35,7 +36,7 @@ export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,rec
         
         <Box ml={1} mt={1}>
           <Typography variant='body1' lineHeight={.9} fontSize={19}>{recipient.name}</Typography>
-          <Typography variant='caption' color='primary.light'>{recipient.status}</Typography>
+          <Typography variant='caption' color='primary.light'>{connectionStatus }</Typography>
         </Box>            
 
         <Box ml='auto' >
