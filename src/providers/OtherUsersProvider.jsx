@@ -10,7 +10,7 @@ export function useOtherUsers(){
 
 export default function OtherUsersProvider({children}) {
     const socket = useSocket()
-    const [connectedRecipients , setConnectedRecipients] = useState([])
+    const [connectedRecipients , setConnectedRecipients] = useState({})
     console.log(connectedRecipients)
     
     useEffect(()=>{
@@ -20,18 +20,26 @@ export default function OtherUsersProvider({children}) {
         socket.on('user-disconnected' , removeDisconnectedRecipient)
     },[socket])
 
-    function getConnectedRecipients(connectedList){
+    function getConnectedRecipients(connectedUsers){
         //let generateArray = Array.from(new Array(100000), (val , index)=>'test'+index)
-        setConnectedRecipients([...connectedList])
+        setConnectedRecipients(connectedUsers)
     }
 
-    function addConnectedRecipient(recipientId){
-        setConnectedRecipients((prev)=>[...prev , recipientId])
+    function addConnectedRecipient({recipientId , newStatus}){
+        setConnectedRecipients((prev)=>{
+            let newObj = {...prev}
+            newObj[recipientId] = newStatus
+            return newObj
+        })
+      
     }
 
-    function removeDisconnectedRecipient(recipientId){
-        setConnectedRecipients((prev)=>prev.filter((id)=>id != recipientId))
-       
+    function removeDisconnectedRecipient({recipientId , newStatus}){
+        setConnectedRecipients((prev)=>{
+            let newObj = {...prev}
+            newObj[recipientId] = newStatus
+            return newObj
+        })
     }
     
   return (

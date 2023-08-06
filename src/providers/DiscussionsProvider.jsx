@@ -180,7 +180,7 @@ export default function DiscussionsProvider({children}) {
     
 
     const {connectedRecipients} = useOtherUsers()
-    
+    console.log({connectedRecipients})
     const filteredDiscussions= useMemo(()=>{
         let newDiscussions = [...discussions]
         newDiscussions.forEach((discussion)=>{
@@ -188,8 +188,8 @@ export default function DiscussionsProvider({children}) {
             if(exisitingContact) discussion.recipient.name = exisitingContact.name 
             else discussion.recipient.name = discussion.recipient.id 
             
-            let isConnected = connectedRecipients.includes(discussion.recipient.id)
-            discussion.recipient.status = isConnected ? 'Online' : 'Offline'
+            let connectionStatus = connectedRecipients[discussion.recipient.id]
+            discussion.recipient.status = connectionStatus ? connectionStatus : 'offline'
         })
         return newDiscussions
     },[discussions , contacts , connectedRecipients])
