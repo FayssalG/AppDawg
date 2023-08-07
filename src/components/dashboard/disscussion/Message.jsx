@@ -1,6 +1,8 @@
 import React from 'react'
 import {Box ,  IconButton , Avatar, Typography} from '@mui/material'
+
 import DoneAllIcon from '@mui/icons-material/DoneAll';
+import DoneIcon from '@mui/icons-material/Done';
 
 import { useAuth } from '../../../providers/AuthProvider'
 
@@ -8,6 +10,7 @@ export default function Message({messageRef , userId, message}) {
   const {senderId ,senderName , content} = message
   const isUser = userId == senderId
   const bubbleColor = isUser ?  'primary.main' : 'topbar.main'
+
 
   return (
     <Box  
@@ -45,8 +48,17 @@ export default function Message({messageRef , userId, message}) {
           >
             <Typography marginBottom={1} >{content}</Typography>
             <Typography width='100%' maxHeight={10} display='flex' justifyContent='end' alignItems='center' fontSize={10} gap={.5}>
-                22:21 
-                {isUser  ? <DoneAllIcon /*color='secondary'*/ sx={{width:12}}/> : null}
+                {message.time} 
+                {isUser  ? 
+                  <>
+                    {
+                      message.isReceived  ? 
+                        <DoneAllIcon color={message.isSeen ? 'secondary' : ''}  sx={{width:12}}/>
+                        :
+                        <DoneIcon sx={{width:12}}/>
+                    } 
+                  </>
+                : null}
             </Typography>
           </Box>
         </Box>

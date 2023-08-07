@@ -60,12 +60,17 @@ export default function OpenDiscussion() {
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
     if(messageContent == '') return
+    const senderId = id
+    const senderName = userData.displayName
+    const content = messageContent
+    const messageId = Date.now().toString()
+    const time = new Date().toLocaleTimeString('en-gb' , {hour:'numeric' , minute:'numeric'}) 
+
     addMessageToDiscussion(activeDiscussion.discussionId ,  activeDiscussion.recipient , 
-       {senderId:id,senderName:userData.displayName , content:messageContent , messageId:generateId(20)})
+      {senderId , senderName , content , messageId , time})
+   
     messageInputRef.current.value = ''
   }  
-
-
 
   const messages = activeDiscussion.messages
   const contact = contacts.find((contact)=>{
@@ -73,7 +78,6 @@ export default function OpenDiscussion() {
   })
 
   
-
   return (
     <>
       { matches ?

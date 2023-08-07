@@ -29,7 +29,7 @@ return (
         {
             messages.map((msg , index)=>{
             const lastRef = messages.length - 1 === index
-            return  <Message key={index} messageRef={lastRef ? setRef : null}  userId={id} message={msg}/>
+            return  <Message key={msg.messageId} messageRef={lastRef ? setRef : null}  userId={id} message={msg}/>
             })
         }
             

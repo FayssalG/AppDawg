@@ -1,5 +1,5 @@
 import React , {useContext ,useState, createContext, useEffect , useCallback , useMemo} from 'react'
-import {   query , getDoc, getDocs, updateDoc , doc ,setDoc , addDoc , collection , where} from 'firebase/firestore'
+import {   query , getDoc, getDocs, updateDoc , doc ,setDoc  , collection , where , onSnapshot} from 'firebase/firestore'
 import { firestoreDb as db} from '../config/firebase'
 
 import useLocalStorage from '../hooks/useLocalStorage'
@@ -7,6 +7,7 @@ import { useSocket } from './SocketProvider'
 import {useUser} from './UserProvider'
 import {useContacts} from './ContactsProvider'
 import {useOtherUsers} from './OtherUsersProvider'
+import { update } from 'firebase/database'
 
 
  
@@ -28,7 +29,7 @@ export default function DiscussionsProvider({children}) {
 
     const activeDiscussion = useMemo(()=>{
         return findActiveDiscussion()
-    },[discussions])   
+    })   
 
     // helper functions
     function findActiveDiscussion(){
@@ -76,76 +77,6 @@ export default function DiscussionsProvider({children}) {
     }
 
 
-    function addMessageToDiscussion(discussionId , recipient , message){
-        socket.emit('send-message' , {discussionId , recipient , message})
-        const newDiscussions = [...discussions]
-            newDiscussions.forEach((discussion)=>{
-                if(discussion.isActive == true){
-                    discussion.messages.push(message)
-                }
-            })
-            
-        setDiscussions(newDiscussions)
-        console.log(discussions)
-
-        updateDiscussionInDb(userId , recipient , message ,discussionId)
-    }
-
-
-    const addRecievedMessageToDiscussion = useCallback( ({discussionId , recipient , message})=>{
-        const isDiscussionExist = findDiscussionByRecipient(recipient) 
-        
-        if(isDiscussionExist){
-            const newDiscussions = [...discussions]
-            newDiscussions.forEach((discussion)=>{
-                if(recipient.id == discussion.recipient.id){
-                    discussion.messages.push(message)
-                    
-                }
-            })
-            
-            setDiscussions(newDiscussions)
-        }
-        else{       
-            setDiscussions((prev)=>[...prev , {discussionId :discussionId , recipient:recipient , messages:[message] , isActive:false}])
-        }
-
-       
-        setTimeout(()=>updateIsRecievedMessageStatus(discussionId , message.messageId) , 5000)
-    },[discussions ])
-    
-   
-
-    const  getUserDiscussions = useCallback(async (id )=>{
-        const discussionsRef = collection(db , 'discussions')
-        const q = query(discussionsRef , where('recipients' , 'array-contains' , id)) 
-        const snapshot = await getDocs(q)        
-        // snapshot.forEach((doc)=>{
-        //      if(doc.data()){
-                
-        //         doc.data().recipients.forEach((recipient)=>{
-        //             if(recipient !== id){
-        //                 newDiscussions.push( {discussionId :doc.data().discussionId, recipient :{id:recipient , name:recipient } , isActive:false , messages:doc.data().messages } )
-        //             }
-        //          })
-        //      }
-        // })
-        let newDiscussions = [...discussions]
-        snapshot.forEach(async (doc)=>{
-            let data = doc.data()
-            const [recipient] = data.recipients.filter((r)=>r!=id)
-            const messages = await getDiscussionMessages(doc.data().discussionId)
-            const discussion = {discussionId :doc.data().discussionId, recipient :{id:recipient , name:recipient } , isActive:false , messages:messages }
-            
-            newDiscussions.push(discussion)
-            
-        })        
-        setDiscussions(newDiscussions)
-
-        
-     },[])
-     
-    console.log({discussions})
     function updateDiscussionInDb( userId , recipient , message , discussionId){
         // async function getDiscussion(discussionId){
         //     const  docSnap = await getDoc( doc(db ,'discussions' , discussionId ))
@@ -177,52 +108,199 @@ export default function DiscussionsProvider({children}) {
         // .catch((err)=>{
         //     console.log(err)
         // })
+
         const discussionDoc = doc(db , 'discussions' , discussionId)
+     
         setDoc(discussionDoc , {
             discussionId : discussionId,
             recipients : [userId , recipient.id]
-        })
-        const messagesDoc = doc(db , 'discussions',discussionId ,'messages' ,  message.messageId)
+        })     
+
+        const messagesDoc = doc(db , 'discussions', discussionId , 'messages' ,  message.messageId)
         setDoc(messagesDoc  , {
             messageId : message.messageId,
             senderName:message.senderName,
             senderId : message.senderId,
             content: message.content,
-        })        
+            time : message.time
+        })         
     }
+
+    
+    function addMessageToDiscussion(discussionId , recipient , message){
+        socket.emit('send-message' , {discussionId , recipient , message})
+        const newDiscussions = [...discussions]
+            newDiscussions.forEach((discussion)=>{
+                if(discussion.isActive == true){
+                    discussion.messages.push(message)
+                }
+            })
+            
+        setDiscussions(newDiscussions)
+
+        updateDiscussionInDb(userId , recipient , message ,discussionId)
+    }
+
+
+    const addRecievedMessageToDiscussion = useCallback( ({discussionId , recipient , message})=>{
+        const isDiscussionExist = findDiscussionByRecipient(recipient) 
+        
+        if(isDiscussionExist){
+            const newDiscussions = [...discussions]
+            newDiscussions.forEach((discussion)=>{
+                if(recipient.id == discussion.recipient.id){
+                    discussion.messages.push(message)
+                    
+                }
+            })
+            
+            setDiscussions(newDiscussions)
+        }
+        else{       
+            setDiscussions((prev)=>[...prev , {discussionId :discussionId , recipient:recipient , messages:[message] , isActive:false}])
+        }
+
+       
+    },[discussions ])
+    
+   
+
+    const  getUserDiscussions = useCallback(async (id )=>{
+        const discussionsRef = collection(db , 'discussions')
+        const q = query(discussionsRef , where('recipients' , 'array-contains' , id)) 
+        const snapshot = await getDocs(q)        
+        // snapshot.forEach((doc)=>{
+        //      if(doc.data()){
+                
+        //         doc.data().recipients.forEach((recipient)=>{
+        //             if(recipient !== id){
+        //                 newDiscussions.push( {discussionId :doc.data().discussionId, recipient :{id:recipient , name:recipient } , isActive:false , messages:doc.data().messages } )
+        //             }
+        //          })
+        //      }
+        // })
+        let newDiscussions = [...discussions]
+        snapshot.forEach(async (doc)=>{
+            let data = doc.data()
+            const [recipient] = data.recipients.filter((r)=>r!=id)
+            const discussion = {discussionId :doc.data().discussionId, recipient :{id:recipient , name:recipient } , isActive:false , messages:[{senderName:'' , senderId:'' , content:''}] }            
+            newDiscussions.push(discussion)
+            
+        })        
+        return newDiscussions
+        
+     },[])
+     
     
 
-    async function getDiscussionMessages(discussionId){
-        const messagesRef = collection(db , 'discussions' , discussionId , 'messages')
-        const messagesSnap = await getDocs(messagesRef)
-        const messages = []
-        messagesSnap.forEach((doc)=>{
-            messages.push(doc.data())
+    async function getMessages(discussionsTofill){
+        discussionsTofill.forEach(async (discussion)=>{
+            const messagesRef = collection(db , 'discussions' , discussion.discussionId , 'messages')
+            const messagesSnap = await getDocs(messagesRef)
+            let messages = []
+            messagesSnap.forEach((doc)=>{
+                let message = doc.data()
+                messages = [...messages , message]
+            })
+            discussion.messages = [...messages]
         })
-        return messages
+        return discussionsTofill
     }
 
+
+    
+    //Updating the state when message status is changed
+    
     function updateIsRecievedMessageStatus(discussionId, messageId){
-        console.log({messageId})
         const messageDoc = doc(db , 'discussions' , discussionId , 'messages' , messageId)
-        updateDoc(messageDoc , {isRecieved:true}) 
+        updateDoc(messageDoc , {isReceived:true}) 
+    
+        const discussion = discussions.find((discussion)=>{
+            return discussion.discussionId == discussionId
+        })
+      
+    
+        socket.emit('message-received' , 
+        {recipientId :discussion.recipient.id , discussionId ,messageId})
+      
     }
 
     function updateIsSeenMessageStatus(discussionId , messageId){
         const messageDoc = doc(db , 'discussions' , discussionId , 'messages' , messageId)
         updateDoc(messageDoc , {isSeen:true}) 
         
+        const discussion = discussions.find((discussion)=>{
+            return discussion.discussionId == discussionId
+        })
+    
+        socket.emit('message-seen' , 
+        {recipientId :discussion.recipient.id , discussionId })
+      
     }
 
+
+    function getUpdatedIsSeenMessageStatus({discussionId , messageId}){
+        const newDiscussions = discussions.map((discussion)=>{
+            if(discussion.discussionId==discussionId){
+                const updatedMessages = discussion.messages.map((msg)=>{
+                    const updatedMessage = {...msg , isSeen:true , isReceived:true}
+                    return updatedMessage
+                })
+                return {...discussion , messages: updatedMessages}
+            }
+            return discussion
+        })
+
+        setDiscussions(newDiscussions)
+    }
+
+    function getUpdatedIsReceivedMessageStatus({ discussionId , messageId}){
+        const newDiscussions = discussions.map((discussion)=>{
+            if(discussion.discussionId==discussionId){
+                const updatedMessages = discussion.messages.map((msg)=>{
+                    if(msg.messageId == messageId){
+                        const updatedMessage = {...msg ,  isReceived:true}
+                        return updatedMessage
+                    }
+                    return msg
+                })
+                return {...discussion , messages: updatedMessages}
+            }
+            return discussion
+        })
+
+        setDiscussions(newDiscussions)
+    }
+
+
+
+    //updates message status for the current user
+    useEffect(()=>{
+        if(!socket) return
+        socket.on('message-seen-update' , getUpdatedIsSeenMessageStatus)
+        socket.on('message-received-update' , getUpdatedIsReceivedMessageStatus)
+
+       },[socket , activeDiscussion])
+   
+    
+    //gets the users discussions
     useEffect(()=>{
         getUserDiscussions(userId)
-             
+        .then((newDiscussions)=>{
+            return getMessages(newDiscussions)
+        })
+        .then((newDiscussions)=>{
+            setDiscussions(newDiscussions)
+        })
     },[])
 
-     
+    //handles message receiving
     useEffect(()=>{
         if(socket == null) return
-        socket.on('recieve-message' , addRecievedMessageToDiscussion)
+        socket.on('recieve-message' , ({discussionId , recipient , message})=>{
+            addRecievedMessageToDiscussion({discussionId , recipient , message})
+            setTimeout(()=>updateIsRecievedMessageStatus(discussionId , message.messageId) , 4000)
+        })
         return ()=>{
             socket.off('recieve-message')
             socket.off('retrieve-discussion')
@@ -230,17 +308,22 @@ export default function DiscussionsProvider({children}) {
     },[socket   , addRecievedMessageToDiscussion])
 
 
-    
+    //handles isSeen status update for the other users
     useEffect(()=>{
         if(activeDiscussion && activeDiscussion.recipient.id != id){
             activeDiscussion.messages.forEach((msg)=>{
+                if(msg.senderId == id) return
                 if(msg.isSeen) return 
                 updateIsSeenMessageStatus(activeDiscussion.discussionId ,msg.messageId)                
             })
         }
-    },[activeDiscussion])
+    })
 
-    let filteredDiscussions= useMemo(()=>{
+        
+   
+   
+   
+   let filteredDiscussions= useMemo(()=>{
         let newDiscussions = [...discussions]
         newDiscussions.forEach((discussion)=>{
             let exisitingContact = contacts.find((contact)=>contact.id === discussion.recipient.id)
