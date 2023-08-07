@@ -61,7 +61,7 @@ export default function OpenDiscussion() {
     let messageContent = messageInputRef.current.value
     if(messageContent == '') return
     addMessageToDiscussion(activeDiscussion.discussionId ,  activeDiscussion.recipient , 
-       {senderId:id,senderName:userData.displayName , content:messageContent , messageId:generateId(20)})
+       {senderId:id,senderName:userData.displayName , content:messageContent , messageId:Date.now().toString()})
     messageInputRef.current.value = ''
   }  
 

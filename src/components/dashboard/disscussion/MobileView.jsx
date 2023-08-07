@@ -16,7 +16,7 @@ import { useUser } from '../../../providers/UserProvider';
 export default function MobileView({  messageInputRef , handleMessageSend , id ,contact , messages , activeDiscussion , handleOpenDialog}) {
 
   const {showDiscussion , setShowDiscussion} =useDiscussions()
-
+  
   const setRef = useCallback((element)=>{
     if(element) element.scrollIntoView({smooth:true})
   },[])
@@ -43,7 +43,7 @@ export default function MobileView({  messageInputRef , handleMessageSend , id ,
             {
             messages.map((msg , index)=>{
                 const lastRef = messages.length - 1 === index
-                return  <Message key={index} messageRef={lastRef ? setRef : null}  message={msg} userId={id} />
+                return  <Message key={msg.messageId} messageRef={lastRef ? setRef : null}  message={msg} userId={id} />
             })
             }
         
