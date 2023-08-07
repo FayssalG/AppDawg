@@ -43,7 +43,7 @@ export default function MobileView({  messageInputRef , handleMessageSend , id ,
             {
             messages.map((msg , index)=>{
                 const lastRef = messages.length - 1 === index
-                return  <Message key={index} messageRef={lastRef ? setRef : null}  userId={id} senderId={msg.senderId} senderName={msg.senderName} content={msg.content}/>
+                return  <Message key={index} messageRef={lastRef ? setRef : null}  message={msg} userId={id} />
             })
             }
         

@@ -14,6 +14,17 @@ import MobileView from './MobileView';
 import AddToContactsDialog from './AddToContactsDialog'
 import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
+//Helper function
+function generateId(len){
+  const chars = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let id = ''
+  for(let i=0 ; i<len ; i++){
+    id += chars[Math.floor(Math.random()*chars.length)]
+  }
+  return id
+}
+
+
 export default function OpenDiscussion() {
   const theme= useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'))
@@ -45,14 +56,12 @@ export default function OpenDiscussion() {
 
   if(!activeDiscussion) return
 
-  //Checking if user is online or not
-  //////////////////////
-
   function handleMessageSend(e){
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
     if(messageContent == '') return
-    addMessageToDiscussion(activeDiscussion.discussionId ,  activeDiscussion.recipient ,  {senderId:id,senderName:userData.displayName , content:messageContent })
+    addMessageToDiscussion(activeDiscussion.discussionId ,  activeDiscussion.recipient , 
+       {senderId:id,senderName:userData.displayName , content:messageContent , messageId:generateId(20)})
     messageInputRef.current.value = ''
   }  
 

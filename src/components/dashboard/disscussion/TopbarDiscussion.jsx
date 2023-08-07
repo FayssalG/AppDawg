@@ -7,9 +7,25 @@ import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography} from 
 import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
 export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,recipient}) {
-
   const {connectedUsers} = useOtherUsers()
-  const connectionStatus = connectedUsers[recipient.id] ? connectedUsers[recipient.id] :'offline'
+  let connectionStatus =useMemo(()=>{
+    if(!connectedUsers[recipient.id]) return 'offline'
+    
+    if(connectedUsers[recipient.id] == 'online') return 'online'
+  
+    let date = new Date(connectedUsers[recipient.id])
+    
+    if(date.getDay() == new Date().getDay()){
+      return 'Online Today at '+ date.toLocaleTimeString(
+        'en-gb',{hour:'numeric', minute : 'numeric'}
+      )
+    }  
+
+    return 'Online on'+ date.toLocaleDateString(
+      'en-gb', { year:'numeric', month : 'numeric', day:'numeric'}
+    )
+
+  },[connectedUsers , recipient]) 
 
   return (
     <AppBar 
