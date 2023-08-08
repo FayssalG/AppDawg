@@ -4,7 +4,7 @@ import React, {createContext, useContext , useEffect, useReducer, useState} from
 import { useAuth } from './AuthProvider'
 import useChatId from '../hooks/useChatId'
 
-import { getDoc , doc , setDoc , updateDoc  } from 'firebase/firestore'
+import { getDoc , doc , setDoc , updateDoc  , arrayUnion} from 'firebase/firestore'
 import {get , set, ref , child } from 'firebase/database'
 import {getDownloadURL,uploadBytes  , getStorage} from 'firebase/storage'
 
@@ -50,7 +50,7 @@ export default function UserProvider({children}) {
       if( docSnap.data()){
         dispatch({type:'all' , payload:docSnap.data()})
       }else{
-        let newData = {chatId: id , displayName : user.displayName , photoURL:'' , infos:'Hi I m new to AppDawg'}
+        let newData = {chatId: id , displayName : user.displayName , photoURL:'' , infos:'Hi I m new to AppDawg' , blockedUsers:[]}
         setDoc(doc(firestoreDb , 'users' , user.uid) , newData)
         dispatch({type:'all' , payload:newData})
       
@@ -58,6 +58,8 @@ export default function UserProvider({children}) {
     }
     getUserData()
   },[])
+
+
 
   function updateDisplayName(newName ){
     if(newName == null) return
@@ -77,6 +79,17 @@ export default function UserProvider({children}) {
     updateDoc(doc(firestoreDb , 'users' , user.uid) , {infos : newInfos})
   }
 
+
+  function updateBlockedUsers(recipientId){
+    if(!recipientId) return
+    
+    updateDoc(doc(firestoreDb , 'users' , user.uid) , {
+      blockedUsers : arrayUnion(recipientId)
+    })
+  }
+
+
+
   async function upload(file ){
     const storage = getStorage()
     const storageRef = storeRef(storage , user.uid )
@@ -88,7 +101,7 @@ export default function UserProvider({children}) {
 
   
   return (
-    <UserContext.Provider value={{id , user ,dispatch  , userData , updateDisplayName , updatePhotoURL , updateInfos }}>
+    <UserContext.Provider value={{id , user ,dispatch  , userData , updateDisplayName , updatePhotoURL , updateInfos , updateBlockedUsers}}>
         {children}
     </UserContext.Provider>
     )

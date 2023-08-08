@@ -9,7 +9,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import BlockIcon from '@mui/icons-material/Block';
 
 
-export default function DesktopView({messageInputRef , handleMessageSend , id ,messages ,contact, activeDiscussion , handleOpenDialog }) {
+export default function DesktopView({messageInputRef , handleMessageSend , id ,messages ,contact, activeDiscussion , handleOpenDialog , handleBlockUser}) {
     const setRef = useCallback((element)=>{
         if(element) element.scrollIntoView({smooth:true})
       },[])
@@ -50,7 +50,7 @@ return (
                     <Paper  sx={{ display:'flex' , alignItems:'center',flexDirection:'column' ,mx:'auto',maxWidth:400 , p:2}}>
                         <Typography mb={2} variant='body1' textAlign='center' fontSize={14} color='grey'>This ID does not exist in your contacts</Typography>
                         <Box>
-                            <Button  startIcon={<BlockIcon/>} sx={{mr:2}}>
+                            <Button onClick={handleBlockUser}  startIcon={<BlockIcon/>} sx={{mr:2}}>
                                 <Typography variant='button' color='success'>Block</Typography>
                             </Button>
                             <Button onClick={handleOpenDialog} startIcon={<PersonAddIcon/>} color='success'>

@@ -13,7 +13,7 @@ import { useAuth } from '../../../providers/AuthProvider'
 import { useDiscussions } from '../../../providers/DiscussionsProvider'
 import { useUser } from '../../../providers/UserProvider';
 
-export default function MobileView({  messageInputRef , handleMessageSend , id ,contact , messages , activeDiscussion , handleOpenDialog}) {
+export default function MobileView({  messageInputRef , handleMessageSend , id ,contact , messages , activeDiscussion , handleOpenDialog , handleBlockUsert}) {
 
   const {showDiscussion , setShowDiscussion} =useDiscussions()
   

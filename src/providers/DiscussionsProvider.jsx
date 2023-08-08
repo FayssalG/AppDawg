@@ -1,5 +1,5 @@
 import React , {useContext ,useState, createContext, useEffect , useCallback , useMemo} from 'react'
-import {   query , getDoc, getDocs, updateDoc , doc ,setDoc  , collection , where , onSnapshot} from 'firebase/firestore'
+import {   query , getDoc, getDocs, updateDoc , doc ,setDoc  , deleteDoc, collection , where } from 'firebase/firestore'
 import { firestoreDb as db} from '../config/firebase'
 
 import useLocalStorage from '../hooks/useLocalStorage'
@@ -7,7 +7,6 @@ import { useSocket } from './SocketProvider'
 import {useUser} from './UserProvider'
 import {useContacts} from './ContactsProvider'
 import {useOtherUsers} from './OtherUsersProvider'
-import { update } from 'firebase/database'
 
 
  
@@ -42,6 +41,12 @@ export default function DiscussionsProvider({children}) {
         return discussions.find((d)=> {
             return d.recipient.id == recipient.id
         }) 
+    }
+
+    function findDiscussionByDiscussionId(discussionId){
+        return discussions.find((d)=>{
+            return d.discussionId == discussionId
+        })
     }
 
     ///////////////
@@ -113,7 +118,8 @@ export default function DiscussionsProvider({children}) {
      
         setDoc(discussionDoc , {
             discussionId : discussionId,
-            recipients : [userId , recipient.id]
+            recipients : [userId , recipient.id],
+            availableTo : [userId , recipient.id]
         })     
 
         const messagesDoc = doc(db , 'discussions', discussionId , 'messages' ,  message.messageId)
@@ -163,11 +169,20 @@ export default function DiscussionsProvider({children}) {
        
     },[discussions ])
     
-   
+    function deleteDiscussion(discussionId){
+        const discussionDoc = doc(db , 'discussions' , discussionId)
+        const discussion = findDiscussionByDiscussionId(discussionId)
+        updateDoc(discussionDoc , {
+            availableTo : [discussion.recipient.id]
+        })
+
+        const newDiscussions = discussions.filter((d)=>d.discussionId != discussionId)
+        setDiscussions(newDiscussions)
+    }
 
     const  getUserDiscussions = useCallback(async (id )=>{
         const discussionsRef = collection(db , 'discussions')
-        const q = query(discussionsRef , where('recipients' , 'array-contains' , id)) 
+        const q = query(discussionsRef , where('availableTo' , 'array-contains' , id)) 
         const snapshot = await getDocs(q)        
         // snapshot.forEach((doc)=>{
         //      if(doc.data()){
@@ -343,6 +358,7 @@ export default function DiscussionsProvider({children}) {
     const [showDiscussion , setShowDiscussion] = useState(false)  
 
     const value = {
+        deleteDiscussion,
         showDiscussion,setShowDiscussion,
         discussions, 
         filteredDiscussions,

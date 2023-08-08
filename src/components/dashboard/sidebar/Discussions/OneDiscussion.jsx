@@ -5,13 +5,16 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { useDiscussions } from '../../../../providers/DiscussionsProvider'
 
-export default function OneDiscussion({active , recipient , latestMsg}) {
-  const {openOldDiscussion} = useDiscussions()
+export default function OneDiscussion({active ,discussionId ,recipient , latestMsg}) {
+  const {openOldDiscussion , deleteDiscussion} = useDiscussions()
   
   function handleOpenDiscussion(e){
     openOldDiscussion(recipient )
   }
 
+  function handleDeleteDiscussion(){
+      deleteDiscussion(discussionId)
+  }
 
   const [hover , setHover] = useState(false)
 
@@ -82,7 +85,7 @@ export default function OneDiscussion({active , recipient , latestMsg}) {
           <Paper>
             <ClickAwayListener onClickAway={handleClose}>
                 <MenuList sx={{width:140 , py:0}} >
-                  <MenuItem >Delete</MenuItem>
+                  <MenuItem onClick={handleDeleteDiscussion}>Delete</MenuItem>
                 </MenuList>
             </ClickAwayListener>
           </Paper>

@@ -29,7 +29,7 @@ export default function OpenDiscussion() {
   const theme= useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'))
   
-  const {userData , id } = useUser()
+  const {userData , id , updateBlockedUsers} = useUser()
   const {addMessageToDiscussion ,activeDiscussion }  = useDiscussions()
   const {contacts , addContact} = useContacts()
   
@@ -53,7 +53,13 @@ export default function OpenDiscussion() {
     addContact(contactId , newName)
   }
   /////////////////
+  // handle blocking a user if it does not exist in contacts
+  function handleBlockUser(){
+     updateBlockedUsers(activeDiscussion.recipient.id)
+  }
 
+
+  ///////////////////////////
   if(!activeDiscussion) return
 
   function handleMessageSend(e){
@@ -90,7 +96,7 @@ export default function OpenDiscussion() {
                 contact={contact}
 
                 handleOpenDialog={handkeOpenDialog}
-
+                handleBlockUser={handleBlockUser}
                 />
           :
             <MobileView
@@ -102,6 +108,7 @@ export default function OpenDiscussion() {
                 contact={contact}
 
                 handkeOpenDialog={handkeOpenDialog}
+                handleBlockUser={handleBlockUser}
             />
       }
       
