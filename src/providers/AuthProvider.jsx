@@ -1,6 +1,6 @@
 import React , {createContext, useContext} from 'react'
 import {useAuthState} from 'react-firebase-hooks/auth'
-import { updateProfile , signInWithPopup , signInWithEmailAndPassword , createUserWithEmailAndPassword , GoogleAuthProvider, sendEmailVerification } from 'firebase/auth'
+import { updateProfile, signInAnonymously , signInWithPopup , signInWithEmailAndPassword , createUserWithEmailAndPassword , GoogleAuthProvider, sendEmailVerification } from 'firebase/auth'
 import {getDownloadURL,uploadBytes  , ref, getStorage} from 'firebase/storage'
 import {auth } from '../config/firebase'
 
@@ -49,13 +49,22 @@ export function AuthProvider({children}) {
     })
   }
 
+  function anonymousSignIn(){
+    signInAnonymously(auth)
+    .then((user)=>{
+      console.log(user)
+    })
+    .catch((err)=>{
+      console.log(err.message)
+    })
+  }
+
   function googleSignIn(){
     const provider = new GoogleAuthProvider()
     signInWithPopup(auth , provider)
   }
 
   function signOut(){
-    localStorage.clear()
     auth.signOut()
     
   }
@@ -84,7 +93,7 @@ export function AuthProvider({children}) {
   }
 
   return (
-    <AuthContext.Provider value={{signOut , signIn , googleSignIn ,updatePhotoURL, updateDisplayName , user , isPending , signUp , resendVerificationEmail}}>
+    <AuthContext.Provider value={{signOut , signIn, anonymousSignIn , googleSignIn ,updatePhotoURL, updateDisplayName , user , isPending , signUp , resendVerificationEmail}}>
         {children}
     </AuthContext.Provider>
   )

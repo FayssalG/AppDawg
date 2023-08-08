@@ -3,11 +3,12 @@ import { Navigate, Link as RouterLink } from 'react-router-dom';
 
 import {Grid ,Container , Button , TextField, Box , Divider , Link, FormHelperText} from '@mui/material'
 import GoogleIcon from '@mui/icons-material/Google';
+import PersonIcon from '@mui/icons-material/Person';
 import { useAuth } from '../../providers/AuthProvider'
 
 
 export default function Login() {
-  const {googleSignIn , signIn , user} = useAuth()
+  const {googleSignIn, anonymousSignIn , signIn , user} = useAuth()
  
   if(user){
     return <Navigate replace to='/'/>
@@ -15,6 +16,7 @@ export default function Login() {
   
   const [credentials , setCredentials] = useState({email : '' , password : '' })
   const [error , setError] = useState()
+
   function handleChange(key , value){
     setCredentials((prev)=>{
       const newCreds = {...prev}
@@ -29,6 +31,10 @@ export default function Login() {
     let password  = credentials.password
     signIn(email ,password , setError)
  
+  }
+
+  function handleAnonymousSignIn(){
+    anonymousSignIn()
   }
   
 
@@ -55,9 +61,12 @@ export default function Login() {
             
             <Divider sx={{mb:4}}>Or</Divider>
 
-            <Button startIcon={<GoogleIcon/>} onClick={googleSignIn}  variant="outlined" >
+            <Button sx={{mb:2}} startIcon={<GoogleIcon/>} onClick={googleSignIn}  variant="outlined" >
                 Continue with Google
             </Button>
+
+            <Button startIcon={<PersonIcon/>}  variant="contained" onClick={handleAnonymousSignIn}>Sign in as a guest</Button>
+
         </Box>
     </Container>
   )
