@@ -4,7 +4,7 @@ import React, {createContext, useContext , useEffect, useReducer, useState} from
 import { useAuth } from './AuthProvider'
 import useChatId from '../hooks/useChatId'
 
-import { getDoc , doc , setDoc , updateDoc  , arrayUnion} from 'firebase/firestore'
+import { getDoc , doc , setDoc , updateDoc  , arrayUnion , arrayRemove} from 'firebase/firestore'
 import {get , set, ref , child } from 'firebase/database'
 import {getDownloadURL,uploadBytes  , getStorage} from 'firebase/storage'
 
@@ -80,12 +80,19 @@ export default function UserProvider({children}) {
   }
 
 
-  function updateBlockedUsers(recipientId){
+  function updateBlockedUsers(recipientId , type){
     if(!recipientId) return
+    if(type=='block'){
+      updateDoc(doc(firestoreDb , 'users' , user.uid) , {
+        blockedUsers : arrayUnion(recipientId)
+      })
+
+    }else{
+      updateDoc(doc(firestoreDb , 'users' , user.uid) , {
+        blockedUsers : arrayRemove(recipientId)
+      })
+    }
     
-    updateDoc(doc(firestoreDb , 'users' , user.uid) , {
-      blockedUsers : arrayUnion(recipientId)
-    })
   }
 
 

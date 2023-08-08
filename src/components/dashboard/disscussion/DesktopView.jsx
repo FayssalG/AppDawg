@@ -9,7 +9,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import BlockIcon from '@mui/icons-material/Block';
 
 
-export default function DesktopView({messageInputRef , handleMessageSend , id ,messages ,contact, activeDiscussion , handleOpenDialog , handleBlockUser}) {
+export default function DesktopView({messageInputRef , handleMessageSend , id ,messages ,contact, activeDiscussion , handleOpenDialog , handleOpenBlockDialog , handleUnblockUser , isBlocked}) {
     const setRef = useCallback((element)=>{
         if(element) element.scrollIntoView({smooth:true})
       },[])
@@ -25,6 +25,27 @@ return (
         
         <TopbarDiscussion recipient={activeDiscussion.recipient} />
          
+         
+        {/* Message to show if id does not exist in contacts */
+            !contact  ?
+            <Box   width='100%' mt={1}>
+                <Box  sx={{opacity:.8 ,display:'flex' , alignItems:'center', gap:5, justifyContent:'center' ,mx:'auto',width:'100%' , p:1}}>
+                    <Typography  variant='body1' textAlign='center' fontSize={14} color='grey'>This ID does not exist in your contacts</Typography>
+                    <Box>
+                        <Button onClick={isBlocked ? handleUnblockUser  : handleOpenBlockDialog}  startIcon={<BlockIcon/>} sx={{mr:2}}>
+                            <Typography variant='button' color='success'>{isBlocked ? 'Unblock' : 'Block'}</Typography>
+                        </Button>
+                        <Button onClick={handleOpenDialog} startIcon={<PersonAddIcon/>} color='success'>
+                            <Typography variant='button' >Add to Contacts</Typography>               
+                        </Button>
+                    </Box>
+                    
+                </Box>
+            </Box>
+            : null    
+        /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
+        }
+
         <Box  overflow='auto' px={2} py={2} display='flex' flexDirection='column'  gap={2}>
         {
             messages.map((msg , index)=>{
@@ -32,6 +53,7 @@ return (
             return  <Message key={msg.messageId} messageRef={lastRef ? setRef : null}  userId={id} message={msg}/>
             })
         }
+            
             
 
         </Box>
@@ -43,26 +65,6 @@ return (
             padding={1.5} 
             width='100%' 
             marginTop='auto' >
-
-            {/* Message to show if id does not exist in contacts */
-                !contact  ?
-                <Box   width='100%' mb={4}>
-                    <Paper  sx={{ display:'flex' , alignItems:'center',flexDirection:'column' ,mx:'auto',maxWidth:400 , p:2}}>
-                        <Typography mb={2} variant='body1' textAlign='center' fontSize={14} color='grey'>This ID does not exist in your contacts</Typography>
-                        <Box>
-                            <Button onClick={handleBlockUser}  startIcon={<BlockIcon/>} sx={{mr:2}}>
-                                <Typography variant='button' color='success'>Block</Typography>
-                            </Button>
-                            <Button onClick={handleOpenDialog} startIcon={<PersonAddIcon/>} color='success'>
-                                <Typography variant='button' >Add to Contacts</Typography>               
-                            </Button>
-                        </Box>
-                        
-                    </Paper>
-                </Box>
-                : null    
-            /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
-            }
 
             <form onSubmit={handleMessageSend} >
                 <FormControl sx={{width:'100%'}} variant="standard"   >

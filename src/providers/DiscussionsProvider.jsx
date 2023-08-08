@@ -132,9 +132,19 @@ export default function DiscussionsProvider({children}) {
         })         
     }
 
-    
+    async function checkIfUserBlocked(idUserA ,idUserB){
+        //checks if this user A is blocked by user B
+        const usersRef = collection(db , 'users')
+        const q = query(usersRef , where('chatId' , '==' , idUserB))
+        const docSnap = await getDocs(q)
+        let data
+        docSnap.forEach((doc)=>{
+            data = doc.data()    
+        })  
+        if(data.blockedUsers.includes(idUserA)) return true
+        return false
+    }    
     function addMessageToDiscussion(discussionId , recipient , message){
-        socket.emit('send-message' , {discussionId , recipient , message})
         const newDiscussions = [...discussions]
             newDiscussions.forEach((discussion)=>{
                 if(discussion.isActive == true){
@@ -144,7 +154,12 @@ export default function DiscussionsProvider({children}) {
             
         setDiscussions(newDiscussions)
 
-        updateDiscussionInDb(userId , recipient , message ,discussionId)
+        checkIfUserBlocked(userId ,recipient.id)
+        .then((isBlocked)=>{
+            if(isBlocked) return
+            socket.emit('send-message' , {discussionId , recipient , message})
+            updateDiscussionInDb(userId , recipient , message ,discussionId)                
+        })
     }
 
 
@@ -358,6 +373,7 @@ export default function DiscussionsProvider({children}) {
     const [showDiscussion , setShowDiscussion] = useState(false)  
 
     const value = {
+        checkIfUserBlocked,
         deleteDiscussion,
         showDiscussion,setShowDiscussion,
         discussions, 

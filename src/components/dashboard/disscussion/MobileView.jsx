@@ -13,7 +13,7 @@ import { useAuth } from '../../../providers/AuthProvider'
 import { useDiscussions } from '../../../providers/DiscussionsProvider'
 import { useUser } from '../../../providers/UserProvider';
 
-export default function MobileView({  messageInputRef , handleMessageSend , id ,contact , messages , activeDiscussion , handleOpenDialog , handleBlockUsert}) {
+export default function MobileView({  messageInputRef , handleMessageSend , id ,contact , messages , activeDiscussion , handleOpenDialog , handleOpenBlockDialog , handleUnblockUser , isBlocked}) {
 
   const {showDiscussion , setShowDiscussion} =useDiscussions()
   
@@ -39,6 +39,26 @@ export default function MobileView({  messageInputRef , handleMessageSend , id ,
         
         <TopbarDiscussion showDiscussion={showDiscussion} onShowDiscussion={setShowDiscussion} recipient={activeDiscussion.recipient}/>
         
+           {/* Message to show if id does not exist in contacts */
+            !contact  ?
+            <Box   width='100%' mt={1}>
+                <Box  sx={{opacity:.8 ,display:'flex' , alignItems:'center', gap:5, justifyContent:'center' ,mx:'auto',width:'100%' , p:1}}>
+                    {/* <Typography  variant='body1' textAlign='center' fontSize={14} color='grey'>This ID does not exist in your contacts</Typography> */}
+                    <Box>
+                        <Button onClick={isBlocked ? handleUnblockUser  : handleOpenBlockDialog}  startIcon={<BlockIcon/>} sx={{mr:2}}>
+                            <Typography variant='button' color='success'>Block</Typography>
+                        </Button>
+                        <Button onClick={handleOpenDialog} startIcon={<PersonAddIcon/>} color='success'>
+                            <Typography variant='button' >Add to Contacts</Typography>               
+                        </Button>
+                    </Box>
+                    
+                </Box>
+            </Box>
+            : null    
+        /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
+        }
+
         <Box  overflow='auto' px={2} py={2} display='flex' flexDirection='column'  gap={2}>
             {
             messages.map((msg , index)=>{
@@ -57,26 +77,7 @@ export default function MobileView({  messageInputRef , handleMessageSend , id ,
             width='100%' 
             marginTop='auto' 
         >
-             {/* Message to show if id does not exist in contacts */
-                !contact  ?
-                <Box   mb={2} width='100%'>
-                    <Paper  sx={{ display:'flex' , alignItems:'center',flexDirection:'column' ,mx:'auto',maxWidth:300 , p:2}}>
-                        <Typography mb={2} variant='body1' textAlign='center' fontSize={14} color='grey'>This ID does not exist in your contacts</Typography>
-                        <Box display='flex' flexDirection='column' alignItems='center'>
-                            <Button startIcon={<BlockIcon/>} sx={{mr:2}}>
-                                <Typography variant='button' color='success'>Block</Typography>
-                            </Button>
-                            <Button onClick={handleOpenDialog} startIcon={<PersonAddIcon/>} color='success'>
-                                <Typography variant='button' >Add to Contacts</Typography>               
-                            </Button>
-                        </Box>
-                        
-                    </Paper>
-                </Box>
-                : null    
-            /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
-            }
-
+             
             <form onSubmit={handleMessageSend}>
               <FormControl sx={{width:'100%'}} variant="standard"   >
                   <OutlinedInput  sx={{height:45}} inputRef={messageInputRef} placeholder='message' endAdornment={

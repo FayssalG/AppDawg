@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useReducer, useRef, useState } from 'react'
 import Message from './Message'
 import TopbarDiscussion from './TopbarDiscussion';
 import { useAuth } from '../../../providers/AuthProvider'
@@ -12,7 +12,7 @@ import { Box ,  FormControl , OutlinedInput , IconButton  , useMediaQuery , useT
 import DesktopView from './DesktopView';
 import MobileView from './MobileView';
 import AddToContactsDialog from './AddToContactsDialog'
-import { useOtherUsers } from '../../../providers/OtherUsersProvider';
+import BlockUserDialog from './BlockUserDialog';
 
 //Helper function
 function generateId(len){
@@ -24,13 +24,21 @@ function generateId(len){
   return id
 }
 
+function dialogReducer(state , action){
+  switch(action.type){
+    case 'add-contact' :
+      return {...state , addContactDialog : action.payload}
+    case 'block' : 
+      return {...state ,  blockDialog : action.payload}
+  }
+}
 
 export default function OpenDiscussion() {
   const theme= useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'))
   
   const {userData , id , updateBlockedUsers} = useUser()
-  const {addMessageToDiscussion ,activeDiscussion }  = useDiscussions()
+  const {addMessageToDiscussion ,activeDiscussion , checkIfUserBlocked}  = useDiscussions()
   const {contacts , addContact} = useContacts()
   
   const messageInputRef = useRef(null)
@@ -40,24 +48,40 @@ export default function OpenDiscussion() {
   },[])
 
   //function handling adding a contact to constacts if it does not exist
-  const [openDialog , setOpenDialog] = useState(false)  
-  function handleCloseDialog(){
-    setOpenDialog(false)
+  const [openDialog , dispatch] = useReducer(dialogReducer , {addContactDialog:false , blockDialog:false}) 
+  
+  function handleCloseAddContactDialog(){
+    dispatch({type:'add-contact' , payload: false})
   }
-  function handkeOpenDialog(){
-    setOpenDialog(true)
-    console.log(openDialog)
+  function handleOpenAddContactDialog(){
+    dispatch({type:'add-contact' , payload:true})
   }
+
   function handleAddContactIfNotExist(contactId , newName){
-    setOpenDialog(false)
+    dispatch({type:'add-contact' , payload:false})
     addContact(contactId , newName)
   }
   /////////////////
+  
   // handle blocking a user if it does not exist in contacts
-  function handleBlockUser(){
-     updateBlockedUsers(activeDiscussion.recipient.id)
+  const [isBlocked , setIsBlocked] =useState(()=> activeDiscussion ? checkIfUserBlocked(activeDiscussion.recipient.id , id) : false)
+  function handleCloseBlockDialog(){
+    dispatch({type:'block' , payload: false})
+  }
+  function handleOpenBlockDialog(){
+    dispatch({type:'block' , payload:true})
   }
 
+  function handleBlockUser(){
+    dispatch({type:'block' , payload: false})
+    setIsBlocked(true)
+    updateBlockedUsers(activeDiscussion.recipient.id , 'block')
+  }
+  function handleUnblockUser(){
+    dispatch({type:'block' , payload: false})
+    setIsBlocked(false)
+    updateBlockedUsers(activeDiscussion.recipient.id , 'unblock')
+   }
 
   ///////////////////////////
   if(!activeDiscussion) return
@@ -95,8 +119,11 @@ export default function OpenDiscussion() {
                 messages={messages}
                 contact={contact}
 
-                handleOpenDialog={handkeOpenDialog}
-                handleBlockUser={handleBlockUser}
+                handleOpenAddContactDialog={handleOpenAddContactDialog}
+                handleOpenBlockDialog={handleOpenBlockDialog}
+                
+                handleUnblockUser={handleUnblockUser}
+                isBlocked={isBlocked}
                 />
           :
             <MobileView
@@ -107,12 +134,17 @@ export default function OpenDiscussion() {
                 messages={messages}
                 contact={contact}
 
-                handkeOpenDialog={handkeOpenDialog}
-                handleBlockUser={handleBlockUser}
-            />
+                handleOpenAddContactDialog={handleOpenAddContactDialog}
+                handleOpenBlockDialog={handleOpenBlockDialog}
+
+                handleUnblockUser={handleUnblockUser}
+                isBlocked={isBlocked}
+
+              />
       }
       
-      <AddToContactsDialog open={openDialog} onClose={handleCloseDialog} contactId={activeDiscussion.recipient.id} onAddContact={handleAddContactIfNotExist}/>  
+      <AddToContactsDialog open={openDialog.addContactDialog} onClose={handleCloseAddContactDialog} contactId={activeDiscussion.recipient.id} onAddContact={handleAddContactIfNotExist}/>  
+      <BlockUserDialog open={openDialog.blockDialog} onClose={handleCloseBlockDialog}  onBlock={handleBlockUser}/>
     </>
     )
 }
