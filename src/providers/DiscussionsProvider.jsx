@@ -141,9 +141,11 @@ export default function DiscussionsProvider({children}) {
         docSnap.forEach((doc)=>{
             data = doc.data()    
         })  
+        if(!data) return false
         if(data.blockedUsers.includes(idUserA)) return true
         return false
     }    
+    
     function addMessageToDiscussion(discussionId , recipient , message){
         const newDiscussions = [...discussions]
             newDiscussions.forEach((discussion)=>{

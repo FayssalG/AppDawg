@@ -6,7 +6,7 @@ import { ArrowBack } from '@mui/icons-material'
 import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography} from '@mui/material'
 import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
-export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,recipient}) {
+export default function TopbarDiscussion({recipient ,showContactInfos , onShowContactInfos ,showDiscussion , onShowDiscussion }) {
   const {connectedUsers} = useOtherUsers()
   let connectionStatus =useMemo(()=>{
     if(!connectedUsers[recipient.id]) return 'offline'
@@ -44,17 +44,19 @@ export default function TopbarDiscussion({showDiscussion , onShowDiscussion ,rec
           : null
         }
        
-        <Box>
-          <IconButton>
-            <Avatar />
-          </IconButton>
+        <Box onClick={()=>onShowContactInfos(true)} sx={{cursor:'pointer'}} display='flex' alignItems='center' >    
+          <Box>
+            <IconButton>
+              <Avatar />
+            </IconButton>
+          </Box>
+          
+          <Box ml={1} mt={1}  >
+            <Typography  variant='body1' lineHeight={.9} fontSize={19}>{recipient.name}</Typography>
+            <Typography variant='caption' color='primary.light'>{connectionStatus }</Typography>
+          </Box>            
         </Box>
         
-        <Box ml={1} mt={1}>
-          <Typography variant='body1' lineHeight={.9} fontSize={19}>{recipient.name}</Typography>
-          <Typography variant='caption' color='primary.light'>{connectionStatus }</Typography>
-        </Box>            
-
         <Box ml='auto' >
           <IconButton >
             <MoreVertIcon/>            

@@ -1,6 +1,10 @@
 import React , {useState , useContext , createContext, useEffect} from 'react'
+import {getDocs , query  , where , collection } from 'firebase/firestore'
+import {firestoreDb as db} from '../config/firebase'
+
 import { useSocket } from './SocketProvider'
 import { useDiscussions } from './DiscussionsProvider'
+
 
 const OtherUsersContext = createContext()
 
@@ -33,8 +37,20 @@ export default function OtherUsersProvider({children}) {
         })
     }
     
+
+    async function getOtherUserDetails(recipientId){
+        const usersRef = collection(db , 'users' )
+        const q = query(usersRef , where('chatId' , '==' ,recipientId))
+        const snapshot = await getDocs(q)
+        let data
+        snapshot.forEach((doc)=>{
+            data = doc.data()
+        })
+        return data
+    }
+    
   return (
-    <OtherUsersContext.Provider value={{connectedUsers}}>
+    <OtherUsersContext.Provider value={{connectedUsers , getOtherUserDetails}}>
         {children}
     </OtherUsersContext.Provider>
   )

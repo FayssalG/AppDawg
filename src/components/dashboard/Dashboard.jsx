@@ -49,7 +49,7 @@ export default function Dashboard() {
                 
                 </Grid>
                 
-                <Grid item  xs={0} md={8.3} sx={{ backgroundImage:`url('${background}')` , backgroundRepeat:'no-repeat',backgroundSize:'cover', backgroundPosition:'center'}}>
+                <Grid item  xs={0} md={8.3} sx={{ backgroundImage:`url('${background}')` , backgroundRepeat:'no-repeat',backgroundSize:'cover', backgroundPosition:'center' }}>
                     <OpenDiscussion /> 
                 </Grid>
               </Grid>

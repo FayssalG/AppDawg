@@ -5,6 +5,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { useDiscussions } from '../../../../providers/DiscussionsProvider'
 
+import DeleteDiscussionDialog from '../../disscussion/DeleteDiscussionDialog';
+
 export default function OneDiscussion({active ,discussionId ,recipient , latestMsg}) {
   const {openOldDiscussion , deleteDiscussion} = useDiscussions()
   
@@ -12,10 +14,7 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
     openOldDiscussion(recipient )
   }
 
-  function handleDeleteDiscussion(){
-      deleteDiscussion(discussionId)
-  }
-
+  //hover event handling
   const [hover , setHover] = useState(false)
 
   function handleMouseEnter(e){
@@ -25,8 +24,6 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
     setHover(false)
   }
   
-  //discussion manage logic (delete discussion, mark messages as read , pin a discussion ... )
- 
   const [open , setOpen] = useState(false)
   const anchorRef = useRef(null)
 
@@ -43,6 +40,22 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
     setOpen(false)
   }
 
+
+
+  //discussion manage logic (delete discussion, mark messages as read , pin a discussion ... )
+  const [openDeleteDialog , setOpenDeleteDialog] = useState(false)
+  
+  function handleOpenDeleteDialog(){
+    setOpenDeleteDialog(true)
+  }
+  
+  function handleCloseDeleteDialog(){
+    setOpenDeleteDialog(false)
+  }
+
+
+    
+  
   return (
     <>
       <Box  borderRadius={'10px'} backgroundColor={active || hover ? '#2A3942' : ''}  onClick={handleOpenDiscussion} sx={{ cursor:'pointer'}}>
@@ -61,7 +74,6 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
           }
         >
         
-
           <ListItemAvatar >
               <Avatar sx={{mr:2,width:50 , height:50}} />
           </ListItemAvatar>
@@ -76,7 +88,7 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
             <Divider sx={{position:'absolute' , bottom:0 , right:5 , width:'85%' }}/>
         </ListItem>
       
-
+        <DeleteDiscussionDialog discussionId={discussionId} open={openDeleteDialog} onClose={handleCloseDeleteDialog} />
       </Box>
 
       {/* Drop menu */}
@@ -85,13 +97,13 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
           <Paper>
             <ClickAwayListener onClickAway={handleClose}>
                 <MenuList sx={{width:140 , py:0}} >
-                  <MenuItem onClick={handleDeleteDiscussion}>Delete</MenuItem>
+                  <MenuItem onClick={handleOpenDeleteDialog}>Delete</MenuItem>
                 </MenuList>
             </ClickAwayListener>
           </Paper>
         </Grow>
       </Popper>
-    
+            
     </>
 
 
