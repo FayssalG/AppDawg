@@ -207,12 +207,21 @@ export default function OpenDiscussion() {
         </Box>
 
 
-        <Box width={400} paddingLeft={2} 
-            sx={showContactInfos ? {translate:'0' , transition:'translate 200ms ease'} 
-            :{transition:'translate 200ms ease' ,translate:'400px' ,position:'fixed',right:0}  }
-        >
-            <ContactInfos recipientId={activeDiscussion.recipient.id} handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} onShowContactInfos={setShowContactInfos}/>
-        </Box>
+        {matches ? 
+          <Box  width={400} paddingLeft={2}
+              sx={showContactInfos ? {translate:'0' , transition:'translate 200ms ease'} 
+              :{transition:'translate 200ms ease' ,translate:'400px' ,position:'fixed',right:0 }}
+          >
+              <ContactInfos recipientId={activeDiscussion.recipient.id} handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} onShowContactInfos={setShowContactInfos}/>
+          </Box>
+          :
+          <Box width='100%' height='100%' position='fixed' padding={2} backgroundColor='primary.dark' top={0}  right={0}
+              sx={showContactInfos ? {transition:'translate 200ms ease' , translate:'0'  } 
+              :{transition:'translate 200ms ease' ,translate:'100%' }}
+          >
+              <ContactInfos recipientId={activeDiscussion.recipient.id} handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} onShowContactInfos={setShowContactInfos}/>
+          </Box>  
+        }
 
 
       <AddToContactsDialog open={openDialog.addContactDialog} onClose={handleCloseAddContactDialog} contactId={activeDiscussion.recipient.id} onAddContact={handleAddContactIfNotExist}/>  
