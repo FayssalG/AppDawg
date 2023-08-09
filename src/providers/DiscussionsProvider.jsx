@@ -1,5 +1,5 @@
 import React , {useContext ,useState, createContext, useEffect , useCallback , useMemo} from 'react'
-import {   query , getDoc, getDocs, updateDoc , doc ,setDoc  , deleteDoc, collection , where } from 'firebase/firestore'
+import {   query , getDoc, getDocs, updateDoc , doc ,setDoc  , deleteDoc, collection , where, arrayUnion } from 'firebase/firestore'
 import { firestoreDb as db} from '../config/firebase'
 
 import useLocalStorage from '../hooks/useLocalStorage'
@@ -7,6 +7,7 @@ import { useSocket } from './SocketProvider'
 import {useUser} from './UserProvider'
 import {useContacts} from './ContactsProvider'
 import {useOtherUsers} from './OtherUsersProvider'
+import { update } from 'firebase/database'
 
 
  
@@ -115,12 +116,18 @@ export default function DiscussionsProvider({children}) {
         // })
 
         const discussionDoc = doc(db , 'discussions' , discussionId)
-     
-        setDoc(discussionDoc , {
-            discussionId : discussionId,
-            recipients : [userId , recipient.id],
-            availableTo : [userId , recipient.id]
-        })     
+        updateDoc(discussionDoc , {
+            availableTo : arrayUnion(userId)
+
+        })
+        .catch((err)=>{      
+            setDoc(discussionDoc , {
+                discussionId : discussionId,
+                recipients : [userId , recipient.id],
+                availableTo : [userId , recipient.id]
+            })     
+        })
+    
 
         const messagesDoc = doc(db , 'discussions', discussionId , 'messages' ,  message.messageId)
         setDoc(messagesDoc  , {

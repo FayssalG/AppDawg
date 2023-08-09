@@ -13,7 +13,7 @@ import {useDiscussions} from '../../../../providers/DiscussionsProvider'
 
 
 export default function Contacts({onShowContacts , showContacts}) {
-    const {contacts , addContact} = useContacts()
+    const {contacts } = useContacts()
 
     const [open , setOpen] = useState(false)
 
@@ -26,10 +26,6 @@ export default function Contacts({onShowContacts , showContacts}) {
         setOpen(false)
     }
 
-    function handleAddContact(contactId , contactName){
-        addContact(contactId , contactName)
-        setOpen(false)
-    }
 
     //handle searching
     const [query , setQuery] = useState('')
@@ -53,7 +49,6 @@ export default function Contacts({onShowContacts , showContacts}) {
     },[contacts , query])
  
     function handleSearch(e){
-      console.log(e.target.value)
       setQuery(e.target.value)
     }
 
@@ -94,7 +89,7 @@ export default function Contacts({onShowContacts , showContacts}) {
                 <NewContactButton onClick={handleOpen}  >
                   NewContact
                 </NewContactButton>
-                <NewContactDialog onAddContact={handleAddContact} onClose={handleClose} open={open}/>
+                <NewContactDialog  onClose={handleClose} open={open}/>
             </Box>
 
             <Typography mb={3} textTransform="uppercase" px={2} variant="h1" fontSize={19} color="primary">

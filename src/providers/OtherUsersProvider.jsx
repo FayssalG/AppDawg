@@ -37,6 +37,17 @@ export default function OtherUsersProvider({children}) {
         })
     }
     
+    async function checkIfUserExists(targetChatId){
+        const usersRef = collection(db , 'users' )
+        const q = query(usersRef , where('chatId' , '==' , targetChatId))
+        const snapshot = await getDocs(q)
+        let data
+        snapshot.forEach((doc)=>{
+            data = doc.data()
+        })
+        if (data) return true
+        return false
+    }
 
     async function getOtherUserDetails(recipientId){
         const usersRef = collection(db , 'users' )
@@ -50,7 +61,7 @@ export default function OtherUsersProvider({children}) {
     }
     
   return (
-    <OtherUsersContext.Provider value={{connectedUsers , getOtherUserDetails}}>
+    <OtherUsersContext.Provider value={{connectedUsers , checkIfUserExists , getOtherUserDetails}}>
         {children}
     </OtherUsersContext.Provider>
   )

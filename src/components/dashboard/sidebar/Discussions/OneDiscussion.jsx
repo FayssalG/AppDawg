@@ -88,7 +88,6 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
             <Divider sx={{position:'absolute' , bottom:0 , right:5 , width:'85%' }}/>
         </ListItem>
       
-        <DeleteDiscussionDialog discussionId={discussionId} open={openDeleteDialog} onClose={handleCloseDeleteDialog} />
       </Box>
 
       {/* Drop menu */}
@@ -104,6 +103,8 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
         </Grow>
       </Popper>
             
+      <DeleteDiscussionDialog discussionId={discussionId} open={openDeleteDialog} onClose={handleCloseDeleteDialog} />
+
     </>
 
 
