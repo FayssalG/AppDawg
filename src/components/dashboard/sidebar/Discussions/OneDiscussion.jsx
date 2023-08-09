@@ -104,7 +104,6 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
       </Popper>
             
       <DeleteDiscussionDialog discussionId={discussionId} open={openDeleteDialog} onClose={handleCloseDeleteDialog} />
-
     </>
 
 

@@ -1,4 +1,4 @@
-import React , {useEffect, useMemo , useState} from 'react'
+import React , {useCallback, useEffect, useMemo , useState} from 'react'
 
 
 
@@ -10,19 +10,29 @@ import { useOtherUsers } from '../../../providers/OtherUsersProvider'
 
 export default function ContactInfos({recipientId ,onShowContactInfos , handleOpenBlockDialog , handleOpenDeleteDialog}) {
     const {getOtherUserDetails} = useOtherUsers()
-    
+
     const [recipientDetails , setRecipientDetails] = useState()
-    useEffect(()=>{
-        getOtherUserDetails(recipientId)
-        .then((data)=>{
-            if(data) setRecipientDetails(data)
-            console.log(data)
-        })
-        
-        return ()=>onShowContactInfos(false)
+    
+    const getRecipientDetails = useCallback( async ()=>{
+        return await getOtherUserDetails(recipientId) 
     },[recipientId])
 
+    useEffect(()=>{
+        getRecipientDetails()
+        .then((data)=>{
+            console.log(data)
+            if(data) setRecipientDetails(data)
+            console.log(data)
+        })        
+        return ()=>onShowContactInfos(false)
+    },[getRecipientDetails])
+
+
+
+
+
   if(!recipientDetails) return
+  
   return (
     <>
         <AppBar sx={{height:70,borderRadius:'10px', backgroundColor:'topbar.main'}} position='static'>
@@ -36,7 +46,7 @@ export default function ContactInfos({recipientId ,onShowContactInfos , handleOp
 
         <Box  paddingTop={1} display='flex' alignItems='center' flexDirection='column' >
             <Paper sx={{width:'100%' , p:3.5 , mb:1 }}>
-                <Avatar  sx={{mb:2 , mx:'auto', width:170  , height:170 }}></Avatar>
+                <Avatar src={recipientDetails.photoURL}  sx={{mb:2 , mx:'auto', width:170  , height:170 }}></Avatar>
                 <Typography mb={.9} textAlign='center' fontSize={24}>{recipientDetails.chatId}</Typography>
                 <Typography textAlign='center' fontSize={16}  color='grey'>~{recipientDetails.displayName}</Typography>
             </Paper>

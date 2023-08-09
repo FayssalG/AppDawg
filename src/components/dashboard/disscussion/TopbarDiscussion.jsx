@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo , useState , useEffect, useCallback } from 'react'
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ArrowBack } from '@mui/icons-material'
@@ -7,14 +7,34 @@ import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography} from 
 import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
 export default function TopbarDiscussion({recipient ,showContactInfos , onShowContactInfos ,showDiscussion , onShowDiscussion }) {
-  const {connectedUsers} = useOtherUsers()
-  let connectionStatus =useMemo(()=>{
-    if(!connectedUsers[recipient.id]) return 'offline'
     
+    //getting the recipient's data
+    const {getOtherUserDetails} = useOtherUsers()
+    const [recipientDetails , setRecipientDetails] = useState()
+    
+    const getRecipientDetails = useCallback(async ()=>{
+      return await getOtherUserDetails(recipient.id)
+    },[recipient.id])
+
+    useEffect(()=>{
+        getRecipientDetails()
+        .then((data)=>{
+            if(data) setRecipientDetails(data)
+            console.log(data)
+        })
+        
+        return ()=>onShowContactInfos(false)
+    },[getRecipientDetails])
+
+
+  //getting the recipient's current status
+  const {connectedUsers} = useOtherUsers()
+  
+  let connectionStatus =useMemo(()=>{
+    if(!connectedUsers[recipient.id]) return 'offline'  
     if(connectedUsers[recipient.id] == 'online') return 'online'
   
     let date = new Date(connectedUsers[recipient.id])
-    
     if(date.getDay() == new Date().getDay()){
       return 'Online Today at '+ date.toLocaleTimeString(
         'en-gb',{hour:'numeric', minute : 'numeric'}
@@ -24,8 +44,10 @@ export default function TopbarDiscussion({recipient ,showContactInfos , onShowCo
     return 'Online on'+ date.toLocaleDateString(
       'en-gb', { year:'numeric', month : 'numeric', day:'numeric'}
     )
-
   },[connectedUsers , recipient]) 
+
+  
+  if(!recipientDetails) return
 
   return (
     <AppBar 
@@ -47,7 +69,7 @@ export default function TopbarDiscussion({recipient ,showContactInfos , onShowCo
         <Box onClick={()=>onShowContactInfos(true)} sx={{cursor:'pointer'}} display='flex' alignItems='center' >    
           <Box>
             <IconButton>
-              <Avatar />
+              <Avatar src={recipientDetails.photoURL}/>
             </IconButton>
           </Box>
           
