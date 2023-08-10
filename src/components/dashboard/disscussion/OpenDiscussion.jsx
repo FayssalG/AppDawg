@@ -5,7 +5,7 @@ import { useAuth } from '../../../providers/AuthProvider'
 import { useDiscussions } from '../../../providers/DiscussionsProvider'
 import { useUser } from '../../../providers/UserProvider';
 import { useContacts } from '../../../providers/ContactsProvider';
-
+import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
 import { SendSharp  } from '@mui/icons-material'
 import {Typography ,Box ,Button ,  FormControl , OutlinedInput , IconButton  , useMediaQuery , useTheme, AppBar, Avatar, Paper} from '@mui/material'
@@ -94,6 +94,12 @@ export default function OpenDiscussion() {
  
   //handle showing contact infos
    const [showContactInfos , setShowContactInfos]= useState(false)
+   function handleShowContactInfos(){
+      setShowContactInfos(true)
+   }
+   function handleHideContactInfos(){
+      setShowContactInfos(false)
+   }
 
   ///////////////
   
@@ -107,7 +113,26 @@ export default function OpenDiscussion() {
 
 
 
-  //////////////
+/////////////////////////////
+//getting the recipient's data
+  const {getOtherUserDetails} = useOtherUsers()
+  const [recipientDetails , setRecipientDetails] = useState()
+
+  const getRecipientDetails = useCallback(async ()=>{
+    if(!activeDiscussion) return
+    return await getOtherUserDetails(activeDiscussion.recipient.id)
+  },[activeDiscussion])
+
+  useEffect(()=>{
+      getRecipientDetails()
+      .then((data)=>{
+          if(data) setRecipientDetails(data)
+          console.log(data)
+      })
+      
+  },[getRecipientDetails])
+
+/////////////////////////////
 
   if(!activeDiscussion) return
 
@@ -154,7 +179,7 @@ export default function OpenDiscussion() {
             flexDirection='column'  
         >
 
-            <TopbarDiscussion recipient={activeDiscussion.recipient} showContactInfos={showContactInfos} onShowContactInfos={setShowContactInfos} showDiscussion={matches ? null : showDiscussion} onShowDiscussion={matches ? null : setShowDiscussion} />
+            <TopbarDiscussion recipientDetails={recipientDetails} recipient={activeDiscussion.recipient} showContactInfos={showContactInfos} handleShowContactInfos={handleShowContactInfos} showDiscussion={matches ? null : showDiscussion} onShowDiscussion={matches ? null : setShowDiscussion}  handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} />
                     
             {/* Message to show if id does not exist in contacts */
             !contact   ?
@@ -212,14 +237,14 @@ export default function OpenDiscussion() {
               sx={showContactInfos ? {translate:'0' , transition:'translate 200ms ease'} 
               :{transition:'translate 200ms ease' ,translate:'400px' ,position:'fixed',right:0 }}
           >
-              <ContactInfos recipientId={activeDiscussion.recipient.id} handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} onShowContactInfos={setShowContactInfos}/>
+              <ContactInfos recipientDetails={recipientDetails} recipientId={activeDiscussion.recipient.id} handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} handleHideContactInfos={handleHideContactInfos}/>
           </Box>
           :
           <Box width='100%' height='100%' position='fixed' padding={2} backgroundColor='primary.dark' top={0}  right={0}
               sx={showContactInfos ? {transition:'translate 200ms ease' , translate:'0'  } 
               :{transition:'translate 200ms ease' ,translate:'100%' }}
           >
-              <ContactInfos recipientId={activeDiscussion.recipient.id} handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} onShowContactInfos={setShowContactInfos}/>
+              <ContactInfos recipientDetails={recipientDetails} recipientId={activeDiscussion.recipient.id} handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} handleHideContactInfos={handleHideContactInfos}/>
           </Box>  
         }
 

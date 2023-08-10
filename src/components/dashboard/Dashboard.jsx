@@ -17,11 +17,12 @@ import SocketProvider from '../../providers/SocketProvider'
 import OtherUsersProvider from '../../providers/OtherUsersProvider'
 
 import { useUser } from '../../providers/UserProvider'
+import ChooseAName from './ChooseAName'
 
 
 export default function Dashboard() {  
     const { signOut , resendVerificationEmail} = useAuth()
-    const {userData , user , id} = useUser()
+    const {userData , user , id } = useUser()
 
     
     if(!user){
@@ -35,6 +36,9 @@ export default function Dashboard() {
     //   )
     // }
 
+    if(userData.displayName == ''){
+      return <ChooseAName/>
+    }
 
     return (     
       <SocketProvider id={id}>

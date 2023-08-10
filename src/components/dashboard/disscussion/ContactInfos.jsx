@@ -8,36 +8,20 @@ import DeleteIcon from '@mui/icons-material/DeleteSharp'
 import CloseIcon from '@mui/icons-material/CloseSharp'
 import { useOtherUsers } from '../../../providers/OtherUsersProvider'
 
-export default function ContactInfos({recipientId ,onShowContactInfos , handleOpenBlockDialog , handleOpenDeleteDialog}) {
-    const {getOtherUserDetails} = useOtherUsers()
+export default function ContactInfos({recipientDetails ,handleHideContactInfos , handleOpenBlockDialog , handleOpenDeleteDialog}) {
 
-    const [recipientDetails , setRecipientDetails] = useState()
+
+    const photoURL = recipientDetails ? recipientDetails.photoURL : null
+    const displayName = recipientDetails ? recipientDetails.displayName : null
+    const infos = recipientDetails ? recipientDetails.infos : null
+    const chatId = recipientDetails ? recipientDetails.chatId : null
     
-    const getRecipientDetails = useCallback( async ()=>{
-        return await getOtherUserDetails(recipientId) 
-    },[recipientId])
-
-    useEffect(()=>{
-        getRecipientDetails()
-        .then((data)=>{
-            console.log(data)
-            if(data) setRecipientDetails(data)
-            console.log(data)
-        })        
-        return ()=>onShowContactInfos(false)
-    },[getRecipientDetails])
-
-
-
-
-
-  if(!recipientDetails) return
   
   return (
     <>
         <AppBar sx={{height:70,borderRadius:'10px', backgroundColor:'topbar.main'}} position='static'>
             <Box display='flex' alignItems='center' height='100%' padding={1}>
-                <IconButton onClick={()=>onShowContactInfos(false)}>
+                <IconButton onClick={handleHideContactInfos}>
                     <CloseIcon/>
                 </IconButton>
                 <Typography >Contact Infos</Typography>
@@ -46,18 +30,18 @@ export default function ContactInfos({recipientId ,onShowContactInfos , handleOp
 
         <Box  paddingTop={1} display='flex' alignItems='center' flexDirection='column' >
             <Paper sx={{width:'100%' , p:3.5 , mb:1 }}>
-                <Avatar src={recipientDetails.photoURL}  sx={{mb:2 , mx:'auto', width:170  , height:170 }}></Avatar>
-                <Typography mb={.9} textAlign='center' fontSize={24}>{recipientDetails.chatId}</Typography>
-                <Typography textAlign='center' fontSize={16}  color='grey'>~{recipientDetails.displayName}</Typography>
+                <Avatar src={photoURL}  sx={{mb:2 , mx:'auto', width:170  , height:170 }}></Avatar>
+                <Typography mb={.9} textAlign='center' fontSize={24}>{chatId}</Typography>
+                <Typography textAlign='center' fontSize={16}  color='grey'>~{displayName}</Typography>
             </Paper>
             
             <Paper sx={{width:'100%' , px:4 , py:2 , mb:1}}>
                 <Typography mb={1} fontSize={14} color='grey'>Infos</Typography>
-                <Typography   fontSize={16}>{recipientDetails.infos}</Typography>
+                <Typography   fontSize={16}>{infos}</Typography>
             </Paper>
             
             <Paper sx={{width:'100%' , px:4 , py:2 }}>
-                <Button onClick={handleOpenBlockDialog} startIcon={<BlockIcon/>} variant='text' sx={{px:2 }}>Block "{recipientDetails.chatId}"</Button>
+                <Button onClick={handleOpenBlockDialog} startIcon={<BlockIcon/>} variant='text' sx={{px:2 }}>Block "{chatId}"</Button>
                 <Button onClick={handleOpenDeleteDialog} startIcon={<DeleteIcon/>} variant='text' sx={{px:2}}>Delete the discussion</Button>
               
             </Paper>    

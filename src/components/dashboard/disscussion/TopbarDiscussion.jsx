@@ -3,30 +3,12 @@ import React, { useMemo , useState , useEffect, useCallback } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ArrowBack } from '@mui/icons-material'
 
-import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography} from '@mui/material'
+import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography , Menu , MenuItem} from '@mui/material'
 import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
-export default function TopbarDiscussion({recipient ,showContactInfos , onShowContactInfos ,showDiscussion , onShowDiscussion }) {
-    
-    //getting the recipient's data
-    const {getOtherUserDetails} = useOtherUsers()
-    const [recipientDetails , setRecipientDetails] = useState()
-    
-    const getRecipientDetails = useCallback(async ()=>{
-      return await getOtherUserDetails(recipient.id)
-    },[recipient.id])
-
-    useEffect(()=>{
-        getRecipientDetails()
-        .then((data)=>{
-            if(data) setRecipientDetails(data)
-            console.log(data)
-        })
-        
-        return ()=>onShowContactInfos(false)
-    },[getRecipientDetails])
-
-
+export default function TopbarDiscussion({recipientDetails, recipient  , handleShowContactInfos ,showDiscussion , onShowDiscussion , handleOpenDeleteDialog, handleOpenBlockDialog }) {
+  const photoURL = recipientDetails ? recipientDetails.photoURL : null
+  
   //getting the recipient's current status
   const {connectedUsers} = useOtherUsers()
   
@@ -46,48 +28,67 @@ export default function TopbarDiscussion({recipient ,showContactInfos , onShowCo
     )
   },[connectedUsers , recipient]) 
 
-  
-  if(!recipientDetails) return
+  //handling the drop menu
+  const [anchorEl , setAnchorElUser] = useState(false)
+  function handleOpenMenu(e){
+    setAnchorElUser(e.currentTarget)
+  }
+
+  function handleCloseMenu(){
+    setAnchorElUser(false)
+  }
 
   return (
-    <AppBar 
+    <>
       
-      sx={{ borderRadius:'10px', borderColor:'primary.main' , height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} 
-      position='static' 
-    >
-    <Toolbar display='flex' sx={{py:1,alignItems:'center'}}>
-        { 
-          showDiscussion ?
-          <Box> 
-            <IconButton onClick={()=>onShowDiscussion(false)}>
-              <ArrowBack/>
-            </IconButton>
-          </Box> 
-          : null
-        }
-       
-        <Box onClick={()=>onShowContactInfos(true)} sx={{cursor:'pointer'}} display='flex' alignItems='center' >    
-          <Box>
-            <IconButton>
-              <Avatar src={recipientDetails.photoURL}/>
-            </IconButton>
+      <AppBar 
+        
+        sx={{ borderRadius:'10px', borderColor:'primary.main' , height:70 , boxShadow:0 , backgroundColor:'topbar.main'}} 
+        position='static' 
+      >
+      <Toolbar display='flex' sx={{py:1,alignItems:'center'}}>
+          { 
+            showDiscussion ?
+            <Box> 
+              <IconButton onClick={()=>onShowDiscussion(false)}>
+                <ArrowBack/>
+              </IconButton>
+            </Box> 
+            : null
+          }
+        
+          <Box onClick={handleShowContactInfos} sx={{cursor:'pointer'}} display='flex' alignItems='center' >    
+            <Box>
+              <IconButton>
+                <Avatar src={photoURL}/>
+              </IconButton>
+            </Box>
+            
+            <Box ml={1} mt={1}  >
+              <Typography  variant='body1' lineHeight={.9} fontSize={19}>{recipient.name}</Typography>
+              <Typography variant='caption' color='primary.light'>{connectionStatus }</Typography>
+            </Box>            
           </Box>
           
-          <Box ml={1} mt={1}  >
-            <Typography  variant='body1' lineHeight={.9} fontSize={19}>{recipient.name}</Typography>
-            <Typography variant='caption' color='primary.light'>{connectionStatus }</Typography>
-          </Box>            
-        </Box>
+          <Box ml='auto' >
+            <IconButton onClick={handleOpenMenu}>
+              <MoreVertIcon />            
+            </IconButton>
+          </Box>
         
-        <Box ml='auto' >
-          <IconButton >
-            <MoreVertIcon/>            
-          </IconButton>
-        </Box>
-      
-    </Toolbar>      
-  
-  </AppBar>
+      </Toolbar>    
 
+          {/* Drop menu */}
+    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
+        <MenuItem onClick={()=>{handleShowContactInfos() ; handleCloseMenu()}}>Contact infos</MenuItem>
+        <MenuItem onClick={()=>{handleOpenDeleteDialog() ; handleCloseMenu()}}>Delete the discussion</MenuItem>
+        <MenuItem onClick={()=>{handleOpenBlockDialog()  ; handleCloseMenu()}}>Block </MenuItem>
+    </Menu>
+  
+    </AppBar>
+
+
+
+  </>
   )
 }

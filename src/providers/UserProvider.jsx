@@ -14,6 +14,7 @@ import  {firestoreDb} from '../config/firebase'
 import {db} from '../config/firebase'
 import { Navigate } from 'react-router-dom'
 import { useSocket } from './SocketProvider'
+import useLocalStorageReducer from '../hooks/useLocalStorageReducer' 
 
 const UserContext = createContext()
 
@@ -40,7 +41,7 @@ export default function UserProvider({children}) {
   const {user} = useAuth()
  
 
-  const [userData , dispatch] = useReducer(reducer ,{displayName:'' , infos:'' , photoURL:''})
+  const [userData , dispatch] = useLocalStorageReducer('details', reducer ,{displayName:'' , infos:'' , photoURL:''})
   const [id] = useChatId(user)
 
 
@@ -61,10 +62,11 @@ export default function UserProvider({children}) {
 
 
 
-  function updateDisplayName(newName ){
+  async function updateDisplayName(newName ){
     if(newName == null) return
     //set(ref(db , 'users/'+user.uid+'/displayName') , newName ? newName : user.displayName)
-    updateDoc(doc(firestoreDb , 'users' , user.uid) , {displayName : newName})
+    return await updateDoc(doc(firestoreDb , 'users' , user.uid) , {displayName : newName})
+    
   }
 
   async function updatePhotoURL(file){
