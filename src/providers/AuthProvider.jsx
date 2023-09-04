@@ -65,6 +65,7 @@ export function AuthProvider({children}) {
   }
 
   function signOut(){
+    localStorage.removeItem('updawg-id')
     auth.signOut()
     
   }

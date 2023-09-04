@@ -10,8 +10,8 @@ export default function SocketProvider({id , children}) {
     const [socket , setSocket] = useState(null)
 
     useEffect(()=>{
-        const hostname ='http://192.168.1.37:'
-        const port = 5000
+        const hostname ='https://appdawg.onrender.com:'
+        const port = 10000
         const newSocket = io(hostname+port , {
             query:{
                 id:id

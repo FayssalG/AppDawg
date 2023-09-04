@@ -26,6 +26,7 @@ export default function Profil({  onShowProfil , showProfil }) {
   }
 
   function handleUpdateDisplayName(){
+    if(displayNameRef.current.value == '') return
     setShowNameInput(false)    
     updateDisplayName(displayNameRef.current.value)
     dispatch({type:'displayname' , payload:displayNameRef.current.value})
@@ -33,6 +34,7 @@ export default function Profil({  onShowProfil , showProfil }) {
 
   
   function handleUpdateInfos(){
+    if(infosRef.current.value == '') return
     setShowInfosInput(false)
     updateInfos(infosRef.current.value)
     dispatch({type:'infos' , payload:infosRef.current.value})
@@ -76,7 +78,7 @@ export default function Profil({  onShowProfil , showProfil }) {
                       {
                         showNameInput ?
                         <FormControl sx={{width:'100%'}}>
-                          <Input defaultValue={displayName} inputRef={displayNameRef} endAdornment={
+                          <Input defaultValue={displayName} inputRef={displayNameRef} inputProps={{maxLength:14}} endAdornment={
                             <IconButton onClick={handleUpdateDisplayName}>
                               <DoneIcon/>
                             </IconButton>
@@ -101,7 +103,7 @@ export default function Profil({  onShowProfil , showProfil }) {
                       {
                         showInfosInput ?
                           <FormControl sx={{width:'100%'}}>
-                            <Input defaultValue={infos} inputRef={infosRef} endAdornment={
+                            <Input defaultValue={infos} inputRef={infosRef} inputProps={{  maxLength:100}} endAdornment={
                               <IconButton onClick={handleUpdateInfos}>
                                 <DoneIcon/>
                               </IconButton>
@@ -111,7 +113,7 @@ export default function Profil({  onShowProfil , showProfil }) {
                     
                         :
                         <Box display='flex' justifyContent='space-between' alignItems='center'>
-                          <Typography sx={{flexGrow:1}}>{infos}</Typography>
+                          <Typography sx={{flexGrow:1}} >{infos}</Typography>
                           <IconButton onClick={()=>setShowInfosInput(true)} >
                             <EditSharpIcon/>
                           </IconButton>
