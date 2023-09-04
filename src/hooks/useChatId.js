@@ -56,8 +56,9 @@ export default function useChatId(user){
             let data
             const snapshot = await getDoc(doc(db , 'users' , user.uid))
             if(snapshot.exists()){
-                data = snapshot.val()
-                setId(data)
+                data = snapshot.data()
+                console.log(data)
+                setId(data.chatId)
             }else{
 
                 console.log('No data')
