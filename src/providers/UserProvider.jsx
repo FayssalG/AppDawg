@@ -46,9 +46,10 @@ export default function UserProvider({children}) {
 
 
   useEffect(()=>{
+
     async function getUserData(){
       const docSnap = await getDoc(doc(firestoreDb , 'users' , user.uid))
-      if( docSnap.data()){
+      if( docSnap.exists()){
         dispatch({type:'all' , payload:docSnap.data()})
       }else{
         let newData = {chatId: id , displayName : user.displayName , photoURL:'' , infos:'Hi I m new to AppDawg' , blockedUsers:[]}
@@ -57,8 +58,8 @@ export default function UserProvider({children}) {
       
       }
     }
-    getUserData()
-  },[])
+    if(id) getUserData()
+  },[id])
 
 
 
