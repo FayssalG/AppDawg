@@ -4,16 +4,27 @@ import {IconButton ,Box,Avatar,ListItem,ListItemAvatar,ListItemText,Typography, 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { useDiscussions } from '../../../../providers/DiscussionsProvider'
+import { useOtherUsers } from '../../../../providers/OtherUsersProvider';
 
 import DeleteDiscussionDialog from '../../disscussion/DeleteDiscussionDialog';
 
 export default function OneDiscussion({active ,discussionId ,recipient , latestMsg}) {
   const {openOldDiscussion , deleteDiscussion} = useDiscussions()
-  
+  //getting profile photo of the other user
+  const {getOtherUserDetails} = useOtherUsers()
+  const [photoURL , setPhotoURL] = useState()
+  useEffect(()=>{
+      getOtherUserDetails(recipient.id)
+      .then((data)=>{
+          console.log({data})
+          setPhotoURL(data.photoURL)
+      }) 
+  },[recipient])
+  ////////////////////
+
   function handleOpenDiscussion(e){
     openOldDiscussion(recipient )
   }
-
   //hover event handling
   const [hover , setHover] = useState(false)
 
@@ -75,7 +86,7 @@ export default function OneDiscussion({active ,discussionId ,recipient , latestM
         >
         
           <ListItemAvatar >
-              <Avatar sx={{mr:2,width:50 , height:50}} />
+              <Avatar sx={{mr:2,width:50 , height:50}} src={photoURL}/>
           </ListItemAvatar>
         
           <ListItemText primary={

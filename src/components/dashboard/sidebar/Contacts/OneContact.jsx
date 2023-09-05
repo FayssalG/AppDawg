@@ -1,5 +1,5 @@
 
-import React , {useState , useRef, useReducer} from 'react'
+import React , {useState , useRef, useReducer, useEffect} from 'react'
 import {Avatar, Divider , ListItem , ListItemAvatar , ListItemText, Typography , Box , Popper ,MenuList , MenuItem , ClickAwayListener ,  IconButton , Paper , Grow , Slide} from '@mui/material'
 import { Button , Dialog , DialogActions, DialogContent , TextField, DialogTitle , DialogContentText} from '@mui/material'
 import  ExpandMoreIcon  from '@mui/icons-material/ExpandMore'
@@ -9,6 +9,7 @@ import { useDiscussions } from '../../../../providers/DiscussionsProvider'
 import { useContacts } from '../../../../providers/ContactsProvider'
 import RenameContactDialog from './RenameContactDialog'
 import DeleteContactDialog from './DeleteContactDialog'
+import { useOtherUsers } from '../../../../providers/OtherUsersProvider'
 
 
 
@@ -29,7 +30,19 @@ function dialogReducer(state , action ){
 }
 
 export default function OneContact({onShowContacts , contactDetails }) {
-    const {name, id , photoURL} = contactDetails 
+    //getting the photo of the contact
+    const [photoURL , setPhotoURL] = useState()
+    const {getOtherUserDetails} = useOtherUsers()
+    const {name, id} = contactDetails 
+    useEffect(()=>{
+        getOtherUserDetails(contactDetails.id)
+        .then((data)=>{
+            console.log({data})
+            setPhotoURL(data.photoURL)
+        }) 
+    },[contactDetails])
+    //////////////////////////////////
+
     const {openNewDiscussion } = useDiscussions()
     const {deleteContact , renameContact} = useContacts()
 
@@ -92,7 +105,7 @@ return (
             }
         >
             <ListItemAvatar >
-                <Avatar sx={{mr:2,width:50 , height:50 }}  />
+                <Avatar sx={{mr:2,width:50 , height:50 }} src={photoURL} />
             </ListItemAvatar>
                     
             <ListItemText sx={{py:2,borderTop:'solid 1px #2A3942'}} primary={
