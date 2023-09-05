@@ -1,4 +1,5 @@
 import React , {useContext ,useState, createContext} from 'react'
+import { useUser } from './UserProvider'
 import useLocalStorage from '../hooks/useLocalStorage'
 
 const ContactsContext = createContext()
@@ -6,7 +7,8 @@ export function useContacts(){
     return useContext(ContactsContext)
 }
 export default function ContactsProvider({children}) {
-    const [contacts , setContacts] = useLocalStorage('contacts' , [])
+    const {user} = useUser()
+    const [contacts , setContacts] = useLocalStorage('contacts-'+user.uid , [])
     
     
     function addContact(contactId , contactName){
