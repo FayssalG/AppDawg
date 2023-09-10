@@ -17,7 +17,7 @@ import SocketProvider from '../../providers/SocketProvider'
 import OtherUsersProvider from '../../providers/OtherUsersProvider'
 
 import { useUser } from '../../providers/UserProvider'
-import ChooseAName from './ChooseAName'
+import ChooseName from './ChooseName'
 
 
 export default function Dashboard() {  

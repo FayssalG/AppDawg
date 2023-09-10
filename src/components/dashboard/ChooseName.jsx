@@ -3,7 +3,7 @@ import { Navigate , redirect } from 'react-router-dom'
 import { useUser } from '../../providers/UserProvider'
 import {Box , Paper, TextField, Typography , Button}  from '@mui/material'
 
-export default function ChooseAName() {
+export default function ChooseName() {
     const {updateDisplayName ,dispatch} = useUser()
     const [name , setName] = useState()
     
