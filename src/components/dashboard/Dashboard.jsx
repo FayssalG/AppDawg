@@ -36,8 +36,9 @@ export default function Dashboard() {
     //   )
     // }
 
-    if(userData.displayName == ''){
-      return <ChooseAName/>
+
+    if(userData.displayName == null){
+      return <ChooseName/>
     }
 
     return (     
