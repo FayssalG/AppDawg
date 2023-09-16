@@ -36,8 +36,8 @@ export default function Dashboard() {
     //   )
     // }
 
-
-    if(userData.displayName == null){
+    console.log(typeof(userData))
+    if(typeof(userData)=='object' && userData.displayName == null){
       return <ChooseName/>
     }
 
