@@ -1,9 +1,12 @@
 import React, { useState , useRef} from 'react'
+
+import MessageIcon from '@mui/icons-material/Message';
 import {Paper, Box , List, Typography  } from '@mui/material'
+
 import OneDiscussion from './OneDiscussion'
 import { useDiscussions } from '../../../../providers/DiscussionsProvider'
 
-
+import noDiscussionsImage from '../../../../Assets/no-discussions.svg'
 export default function Discussions() {
     const {filteredDiscussions } = useDiscussions()
     
@@ -12,6 +15,18 @@ export default function Discussions() {
         
 
         <Box sx={{width:'100%'}}>
+            {
+                filteredDiscussions.length == 0 && (
+                    <Box padding='0 40px' marginTop={15} >
+                        <Box display='flex' justifyContent='center' >
+                            <img style={{width:140 , height:140}} src={noDiscussionsImage}></img>
+                        </Box>    
+                        <Typography marginTop={2} display='flex' >Click on <MessageIcon sx={{width:20 , margin:'0 10px'}} /> to start a new chat </Typography>
+                        <Typography marginTop={1} color='grey' lineHeight={1.5} fontSize={12} >You can chat whit contacts who have logged into AppDawg either as a guest , through a google account or with a an Email</Typography>
+                    </Box>
+                
+                )
+            }
             <List >
                 {
                     filteredDiscussions.map((discussion , index)=>{
