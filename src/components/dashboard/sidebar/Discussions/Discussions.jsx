@@ -22,7 +22,7 @@ export default function Discussions() {
                             <img style={{width:140 , height:140}} src={noDiscussionsImage}></img>
                         </Box>    
                         <Typography marginTop={2} display='flex' >Click on <MessageIcon sx={{width:20 , margin:'0 10px'}} /> to start a new chat </Typography>
-                        <Typography marginTop={1} color='grey' lineHeight={1.5} fontSize={12} >You can chat whit contacts who have logged into AppDawg either as a guest , through a google account or with a an Email</Typography>
+                        <Typography marginTop={1} color='grey' lineHeight={1.5} fontSize={12} >You can chat whit contacts whom you have their chat id saved in your contacts </Typography>
                     </Box>
                 
                 )

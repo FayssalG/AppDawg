@@ -66,35 +66,14 @@ export function AuthProvider({children}) {
 
   function signOut(){
     localStorage.removeItem('updawg-id')
+    localStorage.removeItem('updawg-discussions')
     auth.signOut()
     
   }
 
-  function updateDisplayName(newName ){
-    if(newName == null) return
-    updateProfile(user , {
-      displayName : newName
-    })
-  
-  }
-
-  async function updatePhotoURL(file){
-    const link = await upload(file)
-    updateProfile(user , {
-      photoURL : link
-    })
-  }
-
-  async function upload(file ){
-    const storage = getStorage()
-    const storageRef = ref(storage , user.uid )
-    const snapshot = await uploadBytes(storageRef , file)
-    const link = await getDownloadURL(storageRef)
-    return link
-  }
 
   return (
-    <AuthContext.Provider value={{signOut , signIn, anonymousSignIn , googleSignIn ,updatePhotoURL, updateDisplayName , user , isPending , signUp , resendVerificationEmail}}>
+    <AuthContext.Provider value={{signOut , signIn, anonymousSignIn , googleSignIn  , user , isPending , signUp , resendVerificationEmail}}>
         {children}
     </AuthContext.Provider>
   )

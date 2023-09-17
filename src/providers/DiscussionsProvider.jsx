@@ -67,6 +67,8 @@ export default function DiscussionsProvider({children}) {
         const discussionId = userId + recipient.id
         newDiscussions.push({discussionId:discussionId , recipient , messages:[] , isActive:true})
         setDiscussions(newDiscussions)
+
+        setShowDiscussion(true)
     }
 
     function openOldDiscussion(recipient){
@@ -166,19 +168,21 @@ export default function DiscussionsProvider({children}) {
         const discussion = discussions.find((discussion)=>{
             return discussion.discussionId == discussionId
         })
-    
-        socket.emit('message-seen' , 
-        {recipientId : discussion.recipient.id , discussionId })
+        
+        if(discussion) {
+            socket.emit('message-seen' , 
+            {recipientId : discussion.recipient.id , discussionId })    
+        }
       
     }
 
   
 
      function setUpdatedMessageStatus({discussionId , messageId , type}){
+        if(!findDiscussionByDiscussionId(discussionId)) return 
         let newDiscussions
-        console.log({type})
-
         if(type == 'seen'){
+
              newDiscussions = discussions.map((discussion)=>{
                 if(discussion.discussionId==discussionId){
                     const updatedMessages = discussion.messages.map((msg)=>{
@@ -224,7 +228,7 @@ export default function DiscussionsProvider({children}) {
         if(socket == null) return
         socket.on('receive-message' , ({discussionId , recipient , message})=>{
             addRecievedMessageToDiscussion({discussionId , recipient , message})
-            setTimeout(()=>updateIsRecievedMessageStatus(discussionId , message.messageId) , 4000)
+            setTimeout(()=>updateIsRecievedMessageStatus(discussionId , message.messageId) , 1000)
         })
         return ()=>{
             socket.off('receive-message')
