@@ -38,6 +38,8 @@ export default function DiscussionsProvider({children}) {
         })
     }
 
+    console.log({discussions})
+
     function findDiscussionByRecipient(recipient){
         return discussions.find((d)=> {
             return d.recipient.id == recipient.id

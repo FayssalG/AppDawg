@@ -7,17 +7,19 @@ import { useUser } from '../../../providers/UserProvider';
 import { useContacts } from '../../../providers/ContactsProvider';
 import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
-import { SendSharp  } from '@mui/icons-material'
+import { CloseSharp, SendSharp  } from '@mui/icons-material'
 import {Typography ,Box ,Button ,  FormControl , OutlinedInput , IconButton  , useMediaQuery , useTheme, AppBar, Avatar, Paper} from '@mui/material'
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import BlockIcon from '@mui/icons-material/Block';
-
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 
 import AddToContactsDialog from './AddToContactsDialog'
 import DeleteDiscussionDialog from './DeleteDiscussionDialog';
 import BlockUserDialog from './BlockUserDialog';
 import ContactInfos from './ContactInfos';
+import { MuiFileInput } from 'mui-file-input';
+
 
 //Helper function
 function dialogReducer(state , action){
@@ -41,6 +43,7 @@ export default function OpenDiscussion() {
   const {contacts , addContact} = useContacts()
   
   const messageInputRef = useRef(null)
+  const [attachmentPreview , setAttachmentPreview] = useState(null)
 
   const setRef = useCallback((element)=>{
     if(element) element.scrollIntoView({smooth:true})
@@ -135,21 +138,36 @@ export default function OpenDiscussion() {
 /////////////////////////////
 
   if(!activeDiscussion) return
-
-  function handleMessageSend(e){
+  function convertBlobToDataUrl(blob){
+    const promise = new Promise((resolve , reject)=>{
+      if(!blob) reject(null)
+      const reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = ()=>{
+        resolve(reader.result)
+      }
+    })
+    return promise
+  }
+  async function handleMessageSend(e){
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
-    if(messageContent == '') return
+    if(messageContent == '' && attachmentPreview == null) return
     const senderId = id
     const senderName = userData.displayName
     const content = messageContent
+    
+    const attachment = await convertBlobToDataUrl(attachmentPreview)
+
     const messageId = Date.now().toString()
     const time = new Date().toLocaleTimeString('en-gb' , {hour:'numeric' , minute:'numeric'}) 
 
+    
     addMessageToDiscussion(activeDiscussion.discussionId ,  activeDiscussion.recipient , 
-      {senderId , senderName , content , messageId , time})
+      {senderId , senderName , content , attachment , messageId , time})
    
     messageInputRef.current.value = ''
+    setAttachmentPreview(null)
   }  
 
   const messages = activeDiscussion.messages
@@ -158,8 +176,7 @@ export default function OpenDiscussion() {
   })
 
 
-
-
+  
   return (
     <Box display='flex' flexDirection='row' >
        <Box     
@@ -220,11 +237,27 @@ export default function OpenDiscussion() {
 
                 <form onSubmit={handleMessageSend} >
                     <FormControl sx={{width:'100%'}} variant="standard"   >
-                    <OutlinedInput  sx={{height:45,  }} inputRef={messageInputRef} placeholder='message' endAdornment={
-                        <IconButton type='submit'>
-                            <SendSharp/>
-                        </IconButton>
-                    } />
+                        {
+                          attachmentPreview &&
+                          <Box position='relative' width='400px' height='200px' boxShadow='0 0 1px' p={1} mb={1}>
+                            <IconButton onClick={()=>setAttachmentPreview(null)} sx={{position:'absolute' , right:0 , top:0}}>
+                              <CloseSharp/>
+                            </IconButton>
+                            <img style={{height:'100%' , objectFit:'contain'}} src={URL.createObjectURL(attachmentPreview)} alt="" />
+                          </Box> 
+                        }
+
+                        <OutlinedInput  sx={{height:45,  }} inputRef={messageInputRef} placeholder='message' endAdornment={
+                          <>
+                            <IconButton type='submit'>
+                                <SendSharp/>
+                            </IconButton>
+                            <IconButton>  
+                                  <input type="file" onChange={(e)=>setAttachmentPreview(e.target.files[0])} style={{position : 'absolute' , width:0 , height:0 , opacity:0, padding:'50%'}} />
+                                  <AttachFileIcon/>
+                            </IconButton>
+                          </>                                                  
+                        } />
                     </FormControl>
                 </form>            
             </Box>

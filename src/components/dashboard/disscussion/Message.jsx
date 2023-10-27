@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {Box ,  IconButton , Avatar, Typography} from '@mui/material'
 
 import DoneAllIcon from '@mui/icons-material/DoneAll';
@@ -6,11 +6,25 @@ import DoneIcon from '@mui/icons-material/Done';
 
 import { useAuth } from '../../../providers/AuthProvider'
 
+
 export default function Message({messageRef , userId, message}) {
   const {senderId ,senderName , content} = message
   const isUser = userId == senderId
   const bubbleColor = isUser ?  'primary.main' : 'topbar.main'
 
+  const [attachment , setAttachment] = useState(null)
+  
+  useEffect(()=>{
+    if(!message.attachment) return
+    fetch(message.attachment)
+    .then((dataUrl)=>{
+      return dataUrl.blob()
+    })
+    .then((blob)=>{
+      setAttachment(blob)
+    })
+    
+  },[message])
 
   return (
     <Box  
@@ -46,6 +60,13 @@ export default function Message({messageRef , userId, message}) {
                   top:0,
                   position:'absolute'}}} 
           >
+            {
+              attachment && 
+              <Box maxWidth='200px' height='200px' >
+                <img style={{width:'100%' , height:'100%' , objectFit:'contain'}} src={URL.createObjectURL(attachment)}/>
+              </Box>
+            }
+            
             <Typography marginBottom={1} >{content}</Typography>
             <Typography width='100%' maxHeight={10} display='flex' justifyContent='end' alignItems='center' fontSize={10} gap={.5}>
                 {message.time} 
