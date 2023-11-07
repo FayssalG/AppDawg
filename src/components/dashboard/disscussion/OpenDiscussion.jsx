@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useReducer, useRef, useState } from 'react'
-import Message from './Message'
+import Message from './Message/Message'
 import TopbarDiscussion from './TopbarDiscussion';
 import { useAuth } from '../../../providers/AuthProvider'
 import { useDiscussions } from '../../../providers/DiscussionsProvider'
@@ -139,8 +139,9 @@ export default function OpenDiscussion() {
 
   if(!activeDiscussion) return
   function convertBlobToDataUrl(blob){
+    if(!blob) return (false)
+
     const promise = new Promise((resolve , reject)=>{
-      if(!blob) reject(null)
       const reader = new FileReader()
       reader.readAsDataURL(blob)
       reader.onload = ()=>{
@@ -157,8 +158,10 @@ export default function OpenDiscussion() {
     const senderName = userData.displayName
     const content = messageContent
     
-    const attachment = await convertBlobToDataUrl(attachmentPreview)
-
+    let attachment ={data : await convertBlobToDataUrl(attachmentPreview)}
+    attachment = {...attachment , name:attachmentPreview.name} 
+    console.log(attachment)
+    
     const messageId = Date.now().toString()
     const time = new Date().toLocaleTimeString('en-gb' , {hour:'numeric' , minute:'numeric'}) 
 
