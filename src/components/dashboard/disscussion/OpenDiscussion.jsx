@@ -38,7 +38,7 @@ export default function OpenDiscussion() {
   const matches = useMediaQuery(theme.breakpoints.up('md'))
   
   const {userData , id , updateBlockedUsers} = useUser()
-  const {addMessageToDiscussion ,activeDiscussion , checkIfUserBlocked , }  = useDiscussions()
+  const {addMessageToDiscussion ,activeDiscussion , checkIfUserBlocked , deleteMessage}  = useDiscussions()
   
   const {contacts , addContact} = useContacts()
   
@@ -153,14 +153,18 @@ export default function OpenDiscussion() {
   async function handleMessageSend(e){
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
+    
     if(messageContent == '' && attachmentPreview == null) return
     const senderId = id
     const senderName = userData.displayName
     const content = messageContent
-    
-    let attachment ={data : await convertBlobToDataUrl(attachmentPreview)}
-    attachment = {...attachment , name:attachmentPreview.name} 
-    console.log(attachment)
+   
+    let attachment =null    
+   
+    if(attachmentPreview){
+      attachment ={data : await convertBlobToDataUrl(attachmentPreview)}    
+      attachment = {...attachment , name:attachmentPreview.name} 
+    }
     
     const messageId = Date.now().toString()
     const time = new Date().toLocaleTimeString('en-gb' , {hour:'numeric' , minute:'numeric'}) 
@@ -172,6 +176,11 @@ export default function OpenDiscussion() {
     messageInputRef.current.value = ''
     setAttachmentPreview(null)
   }  
+
+  //Deleting a message
+  function handleDeleteMessage(message){
+      deleteMessage(activeDiscussion.id , message)
+  }
 
   const messages = activeDiscussion.messages
   const contact = contacts.find((contact)=>{
@@ -225,7 +234,7 @@ export default function OpenDiscussion() {
               {
                 messages.map((msg , index)=>{
                 const lastRef = messages.length - 1 === index
-                return  <Message key={msg.messageId} messageRef={lastRef ? setRef : null}  userId={id} message={msg}/>
+                return  <Message key={msg.messageId}  messageRef={lastRef ? setRef : null} onDelete={handleDeleteMessage} userId={id} message={msg}/>
                 })
               }
             </Box>

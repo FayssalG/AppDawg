@@ -38,7 +38,6 @@ export default function DiscussionsProvider({children}) {
         })
     }
 
-    console.log({discussions})
 
     function findDiscussionByRecipient(recipient){
         return discussions.find((d)=> {
@@ -148,7 +147,20 @@ export default function DiscussionsProvider({children}) {
         setDiscussions(newDiscussions)
     }
 
-    
+    function deleteMessage(discussionId , message){
+        const newDiscussions = discussions.map((discussion)=>{
+            if(discussionId == discussion.id){
+                let newMessages = discussion.messages.filter((msg)=>msg.messageId !== message.messageId)
+                console.log(newMessages)
+                return {...discussion , messages:newMessages}
+            
+            }            
+
+            return discussion
+        })
+        setDiscussions(newDiscussions)
+    }   
+
     //Updating the state when message status is changed
     
     function updateIsRecievedMessageStatus(discussionId, messageId){
@@ -276,6 +288,7 @@ export default function DiscussionsProvider({children}) {
     const value = {
         checkIfUserBlocked,
         deleteDiscussion,
+        deleteMessage,
         showDiscussion,setShowDiscussion,
         discussions, 
         filteredDiscussions,

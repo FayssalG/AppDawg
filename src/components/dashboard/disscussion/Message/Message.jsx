@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from 'react'
-import {Box ,  IconButton , Avatar, Typography} from '@mui/material'
+import {Box ,  IconButton , Avatar, Typography,Menu, MenuItem} from '@mui/material'
 
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import DoneIcon from '@mui/icons-material/Done';
 
 import { useAuth } from '../../../../providers/AuthProvider'
 import ClickedImage from './ClickedImage';
+import { ExpandMore } from '@mui/icons-material';
+import { useDiscussions } from '../../../../providers/DiscussionsProvider';
 
 
-export default function Message({messageRef , userId, message}) {
+export default function Message({messageRef , userId, message , onDelete}) {
   const {senderId ,senderName , content} = message
   const isUser = userId == senderId
+
+  
   const bubbleColor = isUser ?  'primary.main' : 'topbar.main'
 
   const [attachment , setAttachment] = useState(null)
   const [showImage , setShowImage] = useState(false)
+
+  const [anchorEl , setAnchorElUser] = useState(false)
+  function handleOpenMenu(e){
+    setAnchorElUser(e.currentTarget)
+  }
+  function handleCloseMenu(){
+    setAnchorElUser(false)
+  }
 
   function handleShowImage(){
     if(attachment) setShowImage(URL.createObjectURL(attachment))
@@ -44,21 +56,22 @@ export default function Message({messageRef , userId, message}) {
         textAlign={isUser && 'right'} 
         position='relative' 
         display='flex' alignItems='start' width='fit-content'>
-          {
+          {/* {
             !isUser &&
             <IconButton>
               <Avatar sx={{width:30 , height:30}}/>
             </IconButton>
           }
-          
+           */}
           <Box maxWidth={400} marginLeft={1}> 
           
-            <Typography  marginBottom={.5}  color='cyan' fontSize={12} >~ {senderName}</Typography>
+            {/* <Typography  marginBottom={.5}  color='cyan' fontSize={12} >~ {senderName}</Typography> */}
             <Box   
               position='relative' 
               backgroundColor={bubbleColor}  
               borderRadius='5px' 
               padding={.5}
+              paddingTop={0}
               sx={{
                   overflowWrap:'break-word',
                   ':after':
@@ -71,7 +84,16 @@ export default function Message({messageRef , userId, message}) {
                     top:0,
                     position:'absolute'}}} 
             >
-              {
+              <Box  position='relative' height={8} mb={2}>
+                <IconButton onClick={handleOpenMenu} sx={{position:'absolute' , left:0 , top:0}} >
+                  <ExpandMore sx={{width:15,height:15 }}/>
+                </IconButton>
+                <Menu  anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
+                  <MenuItem onClick={()=>onDelete(message)}>Delete</MenuItem>
+                </Menu>
+              </Box>
+
+            {
                 attachment && 
                 <Box onClick={handleShowImage} maxWidth='200px' height='200px' mb='.5rem' sx={{cursor:'pointer'}} >
                   <img style={{width:'100%' , height:'100%' , objectFit:'cover'}} src={URL.createObjectURL(attachment)}/>
