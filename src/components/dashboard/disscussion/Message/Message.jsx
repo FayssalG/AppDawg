@@ -84,8 +84,8 @@ export default function Message({messageRef , userId, message , onDelete}) {
                     top:0,
                     position:'absolute'}}} 
             >
-              <Box  position='relative' height={8} mb={2}>
-                <IconButton onClick={handleOpenMenu} sx={{position:'absolute' , left:0 , top:0}} >
+              <Box  position='relative' height={10} mb={2}>
+                <IconButton onClick={handleOpenMenu} sx={{position:'absolute' , left:0 , top:0 ,paddingInline:0}} >
                   <ExpandMore sx={{width:15,height:15 }}/>
                 </IconButton>
                 <Menu  anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>

@@ -19,6 +19,7 @@ import DeleteDiscussionDialog from './DeleteDiscussionDialog';
 import BlockUserDialog from './BlockUserDialog';
 import ContactInfos from './ContactInfos';
 import { MuiFileInput } from 'mui-file-input';
+import { useAttachmentHandler } from '../../../providers/AttachmentHandlerProvider';
 
 
 //Helper function
@@ -39,11 +40,11 @@ export default function OpenDiscussion() {
   
   const {userData , id , updateBlockedUsers} = useUser()
   const {addMessageToDiscussion ,activeDiscussion , checkIfUserBlocked , deleteMessage}  = useDiscussions()
-  
   const {contacts , addContact} = useContacts()
+  const {currentAttachment , addAttachment} = useAttachmentHandler()  
   
   const messageInputRef = useRef(null)
-  const [attachmentPreview , setAttachmentPreview] = useState(null)
+  // const [attachmentPreview , setAttachmentPreview] = useState(null)
 
   const setRef = useCallback((element)=>{
     if(element) element.scrollIntoView({smooth:true})
@@ -154,16 +155,16 @@ export default function OpenDiscussion() {
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
     
-    if(messageContent == '' && attachmentPreview == null) return
+    if(messageContent == '' && currentAttachment == null) return
     const senderId = id
     const senderName = userData.displayName
     const content = messageContent
    
     let attachment =null    
    
-    if(attachmentPreview){
-      attachment ={data : await convertBlobToDataUrl(attachmentPreview)}    
-      attachment = {...attachment , name:attachmentPreview.name} 
+    if(currentAttachment){
+      attachment ={data : await convertBlobToDataUrl(currentAttachment)}    
+      attachment = {...attachment , name:currentAttachment.name} 
     }
     
     const messageId = Date.now().toString()
@@ -174,7 +175,7 @@ export default function OpenDiscussion() {
       {senderId , senderName , content , attachment , messageId , time})
    
     messageInputRef.current.value = ''
-    setAttachmentPreview(null)
+    addAttachment(null)
   }  
 
   //Deleting a message
@@ -250,12 +251,12 @@ export default function OpenDiscussion() {
                 <form onSubmit={handleMessageSend} >
                     <FormControl sx={{width:'100%'}} variant="standard"   >
                         {
-                          attachmentPreview &&
+                          currentAttachment &&
                           <Box position='relative' width='400px' height='200px' boxShadow='0 0 1px' p={1} mb={1}>
-                            <IconButton onClick={()=>setAttachmentPreview(null)} sx={{position:'absolute' , right:0 , top:0}}>
+                            <IconButton onClick={()=>addAttachment(null)} sx={{position:'absolute' , right:0 , top:0}}>
                               <CloseSharp/>
                             </IconButton>
-                            <img style={{height:'100%' , objectFit:'contain'}} src={URL.createObjectURL(attachmentPreview)} alt="" />
+                            <img style={{height:'100%' , objectFit:'contain'}} src={URL.createObjectURL(currentAttachment)} alt="" />
                           </Box> 
                         }
 
@@ -265,7 +266,7 @@ export default function OpenDiscussion() {
                                 <SendSharp/>
                             </IconButton>
                             <IconButton>  
-                                  <input type="file" onChange={(e)=>setAttachmentPreview(e.target.files[0])} style={{position : 'absolute' , width:0 , height:0 , opacity:0, padding:'50%'}} />
+                                  <input type="file" onChange={(e)=>addAttachment(e.target.files[0])} style={{position : 'absolute' , width:0 , height:0 , opacity:0, padding:'50%'}} />
                                   <AttachFileIcon/>
                             </IconButton>
                           </>                                                  

@@ -18,6 +18,7 @@ import OtherUsersProvider from '../../providers/OtherUsersProvider'
 
 import { useUser } from '../../providers/UserProvider'
 import ChooseName from './ChooseName'
+import AttachmentHandlerProvider from '../../providers/AttachmentHandlerProvider'
 
 
 export default function Dashboard() {  
@@ -54,7 +55,9 @@ export default function Dashboard() {
                 </Grid>
                 
                 <Grid item  xs={0} md={8.3} sx={{ backgroundImage:`url('${background}')` , backgroundRepeat:'no-repeat',backgroundSize:'cover', backgroundPosition:'center' }}>
+                  <AttachmentHandlerProvider>
                     <OpenDiscussion /> 
+                  </AttachmentHandlerProvider>
                 </Grid>
               </Grid>
               
