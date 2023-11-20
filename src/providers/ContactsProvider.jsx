@@ -11,7 +11,7 @@ export default function ContactsProvider({children}) {
     const [contacts , setContacts] = useLocalStorage('contacts-'+user.uid , [])
     
     
-    function addContact(contactId , contactName){
+    function addContact(contactId , contactName , setError){
         setContacts((prev)=>{
             return [...prev , {id:contactId , name:contactName}]
         })

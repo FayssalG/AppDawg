@@ -1,3 +1,5 @@
+import background from '../../Assets/background.jpg'
+
 import React, {useState} from 'react'
 import { Link as RouterLink , Navigate} from 'react-router-dom'
 import {Container , Box , TextField , Button ,Link , FormHelperText} from '@mui/material'
@@ -31,11 +33,11 @@ export default function Signup() {
 
 
   return (
-    <Container>
+    <Box  sx={{height:'100svh', backgroundImage: `url(${background})` , backgroundSize:'cover'}}>
         <form onSubmit={handleSubmit}>
             <Box 
                 maxWidth={300}
-                mt={20}
+                pt={10}
                 mx='auto'
                 display='flex'
                 flexDirection='column' 
@@ -55,7 +57,7 @@ export default function Signup() {
             </Box>
                 
         </form>
-    </Container>
+    </Box>
     
   )
 }

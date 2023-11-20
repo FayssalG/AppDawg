@@ -1,4 +1,4 @@
-import background from '../../Assets/background.jpg'
+import background from '../../Assets/backgroundWithLogo.jpg'
 import React, { useState , useEffect} from 'react'
 import { useAuth } from '../../providers/AuthProvider'
 import useChatId from '../../hooks/useChatId'

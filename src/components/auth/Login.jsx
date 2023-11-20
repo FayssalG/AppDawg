@@ -1,3 +1,4 @@
+import background from '../../Assets/background.jpg'
 import React, { useEffect, useRef, useState } from 'react'
 import { Navigate, Link as RouterLink } from 'react-router-dom';
 
@@ -39,12 +40,11 @@ export default function Login() {
   
 
   return (
-    <Container  >
+    <Box sx={{height:'100svh', backgroundImage: `url(${background})` , backgroundSize:'cover'}}>
         <Box
             maxWidth={300}
             mx='auto'
-            pt={20}
-            height={500}
+            pt={10}
             display='flex'
             flexDirection='column'
         >            
@@ -68,6 +68,6 @@ export default function Login() {
             <Button startIcon={<PersonIcon/>}  variant="contained" onClick={handleAnonymousSignIn}>Sign in as a guest</Button>
 
         </Box>
-    </Container>
+    </Box>
   )
 }

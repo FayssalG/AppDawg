@@ -4,7 +4,7 @@ import { useContacts } from '../../../../providers/ContactsProvider'
 import { useOtherUsers } from '../../../../providers/OtherUsersProvider'
 
 export default function NewContactDialog({onClose , open }) {
-    const {addContact} = useContacts()
+    const {addContact , contacts} = useContacts()
     const {checkIfUserExists} = useOtherUsers()
 
     const [contactName , setContactName] = useState(null)
@@ -13,9 +13,13 @@ export default function NewContactDialog({onClose , open }) {
     
     function handleAddContact(){
         setError(false)
+        if(contacts.find((contact)=>contact.id == contactId)){
+            setError('This ID already exists in your contacts')
+            return
+        }
         checkIfUserExists(contactId)
         .then((isExist)=>{
-            if(isExist){
+            if(isExist ){
                 addContact(contactId , contactName)      
                 onClose()    
             }else{
