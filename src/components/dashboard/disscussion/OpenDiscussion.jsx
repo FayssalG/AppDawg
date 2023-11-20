@@ -69,7 +69,7 @@ export default function OpenDiscussion() {
   /////////////////
   
   // handle blocking a user if it does not exist in contacts
-  const [isBlocked , setIsBlocked] =useState()
+  const [isBlocked , setIsBlocked] =useState(null)
   useEffect(()=>{
     if(!activeDiscussion) return
     checkIfUserBlocked(activeDiscussion.recipient.id , id)
@@ -152,6 +152,7 @@ export default function OpenDiscussion() {
     return promise
   }
   async function handleMessageSend(e){
+    if(isBlocked) setIsBlocked(false)
     e.preventDefault()    
     let messageContent = messageInputRef.current.value
     
@@ -209,7 +210,7 @@ export default function OpenDiscussion() {
             flexDirection='column'  
         >
 
-            <TopbarDiscussion recipientDetails={recipientDetails} recipient={activeDiscussion.recipient} showContactInfos={showContactInfos} handleShowContactInfos={handleShowContactInfos} showDiscussion={matches ? null : showDiscussion} onShowDiscussion={matches ? null : setShowDiscussion}  handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} />
+            <TopbarDiscussion recipientDetails={recipientDetails} recipient={activeDiscussion.recipient} showContactInfos={showContactInfos} handleShowContactInfos={handleShowContactInfos} showDiscussion={matches ? null : showDiscussion} onShowDiscussion={matches ? null : setShowDiscussion}  handleOpenDeleteDialog={handleOpenDeleteDialog} isBlocked={isBlocked} onUnblock={handleUnblockUser} handleOpenBlockDialog={handleOpenBlockDialog} />
                     
             {/* Message to show if id does not exist in contacts */
             !contact   ?
@@ -217,7 +218,7 @@ export default function OpenDiscussion() {
                 <Box  sx={{opacity:.8 ,display:'flex' , alignItems:'center', gap:5, justifyContent:'center' ,mx:'auto',width:'100%' , p:1}}>
                     {/* <Typography  variant='body1' textAlign='center' fontSize={14} color='grey'>This ID does not exist in your contacts</Typography> */}
                     <Box>
-                        <Button onClick={isBlocked ? handleUnblockUser  : handleOpenBlockDialog}  startIcon={<BlockIcon/>} sx={{mr:2}}>
+                        <Button onClick={isBlocked ? handleUnblockUser : handleOpenBlockDialog}  startIcon={<BlockIcon/>} sx={{mr:2}}>
                             <Typography variant='button' color='success'>{isBlocked ? 'Unblock' : 'Block'}</Typography>
                         </Button>
                         <Button onClick={handleOpenAddContactDialog} startIcon={<PersonAddIcon/>} color='success'>
@@ -281,9 +282,9 @@ export default function OpenDiscussion() {
         {matches ? 
           <Box  width={400} paddingLeft={2}
               sx={showContactInfos ? {translate:'0' , transition:'translate 200ms ease'} 
-              :{transition:'translate 200ms ease' ,translate:'400px' ,position:'fixed',right:0 }}
+              :{transition:'translate 200ms ease' ,translate:'400px' ,position:'fixed',right:0, overflow:'scroll' }}
           >
-              <ContactInfos recipientDetails={recipientDetails} recipientId={activeDiscussion.recipient.id} handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenBlockDialog={handleOpenBlockDialog} handleHideContactInfos={handleHideContactInfos}/>
+              <ContactInfos recipientDetails={recipientDetails} recipientId={activeDiscussion.recipient.id} handleOpenDeleteDialog={handleOpenDeleteDialog} onUnblock={handleUnblockUser} isBlocked={isBlocked} handleOpenBlockDialog={handleOpenBlockDialog} handleHideContactInfos={handleHideContactInfos}/>
           </Box>
           :
           <Box width='100%' height='100%' position='fixed' padding={2} backgroundColor='primary.dark' top={0}  right={0}

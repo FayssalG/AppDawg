@@ -6,7 +6,7 @@ import { ArrowBack } from '@mui/icons-material'
 import {Paper , Box , Avatar , IconButton , AppBar , Toolbar , Typography , Menu , MenuItem} from '@mui/material'
 import { useOtherUsers } from '../../../providers/OtherUsersProvider';
 
-export default function TopbarDiscussion({recipientDetails, recipient  , handleShowContactInfos ,showDiscussion , onShowDiscussion , handleOpenDeleteDialog, handleOpenBlockDialog }) {
+export default function TopbarDiscussion({recipientDetails, recipient  , handleShowContactInfos ,showDiscussion , onShowDiscussion , handleOpenDeleteDialog, handleOpenBlockDialog , onUnblock , isBlocked }) {
   const photoURL = recipientDetails ? recipientDetails.photoURL : null
   
   //getting the recipient's current status
@@ -82,7 +82,7 @@ export default function TopbarDiscussion({recipientDetails, recipient  , handleS
     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
         <MenuItem onClick={()=>{handleShowContactInfos() ; handleCloseMenu()}}>Contact infos</MenuItem>
         <MenuItem onClick={()=>{handleOpenDeleteDialog() ; handleCloseMenu()}}>Delete the discussion</MenuItem>
-        <MenuItem onClick={()=>{handleOpenBlockDialog()  ; handleCloseMenu()}}>Block </MenuItem>
+        <MenuItem onClick={()=>{isBlocked ? onUnblock() : handleOpenBlockDialog()  ; handleCloseMenu()}}>{isBlocked ? 'unBlock' : 'Block' }</MenuItem>
     </Menu>
   
     </AppBar>

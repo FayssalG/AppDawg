@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/DeleteSharp'
 import CloseIcon from '@mui/icons-material/CloseSharp'
 import { useOtherUsers } from '../../../providers/OtherUsersProvider'
 
-export default function ContactInfos({recipientDetails ,handleHideContactInfos , handleOpenBlockDialog , handleOpenDeleteDialog}) {
+export default function ContactInfos({recipientDetails ,handleHideContactInfos ,  onUnblock , isBlocked,handleOpenBlockDialog , handleOpenDeleteDialog }) {
 
 
     const photoURL = recipientDetails ? recipientDetails.photoURL : null
@@ -28,7 +28,7 @@ export default function ContactInfos({recipientDetails ,handleHideContactInfos ,
             </Box>
         </AppBar>         
 
-        <Box  paddingTop={1} display='flex' alignItems='center' flexDirection='column' >
+        <Box maxHeight={'85svh'} overflow={'auto'}  paddingTop={1} display='flex' alignItems='center' flexDirection='column' >
             <Paper sx={{width:'100%' , p:3.5 , mb:1 }}>
                 <Avatar src={photoURL}  sx={{mb:2 , mx:'auto', width:170  , height:170 }}></Avatar>
                 <Typography mb={.9} textAlign='center' fontSize={24}>{chatId}</Typography>
@@ -41,7 +41,7 @@ export default function ContactInfos({recipientDetails ,handleHideContactInfos ,
             </Paper>
             
             <Paper sx={{width:'100%' , px:4 , py:2 }}>
-                <Button onClick={handleOpenBlockDialog} startIcon={<BlockIcon/>} variant='text' sx={{px:2 }}>Block "{chatId}"</Button>
+                <Button onClick={()=>isBlocked ? onUnblock() : handleOpenBlockDialog() } startIcon={<BlockIcon/>} variant='text' sx={{px:2 }}>{isBlocked ? 'Unblock' : 'Block'} "{chatId}"</Button>
                 <Button onClick={handleOpenDeleteDialog} startIcon={<DeleteIcon/>} variant='text' sx={{px:2}}>Delete the discussion</Button>
               
             </Paper>    
